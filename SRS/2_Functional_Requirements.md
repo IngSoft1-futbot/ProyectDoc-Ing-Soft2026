@@ -80,43 +80,51 @@ A registered user logs into the system to access their dashboard and manage thei
 
 ---
 
-### 1.3 Use Case: Edit User Profile
+### 1.3 Use Case: Manage User Profile
 
 **Actor:** User (Logged In)
 
 **Brief Description:**
-A user views and updates their profile information including name, email, avatar, and password.
+A user views and updates their profile information, including personal details and optional password changes.
 
 **Preconditions:**
 - User is logged in
 
 **Inputs:**
-1. Name (Optional update)
-2. Email (Optional update)
-3. Avatar (Optional update)
-4. Old Password (Required if changing password or sensitive data)
-5. New Password (Optional update)
+1. Name (Optional)
+2. Email (Optional)
+3. Avatar (Optional)
+4. Current Password (Required for password change)
+5. New Password (Optional)
+6. Repeat Password (Optional)
 
 **Successful Flow:**
-1. User accesses the profile management section
-2. System displays current user information
-3. User modifies desired fields
-4. System validates input formats
-5. System updates database with new information
-6. System confirms changes to the user
+1. User clicks on their avatar icon in the interface.
+2. System redirects the user to the "Manage Profile" page.
+3. System pre-populates the form with the user's current Name, Email, and Avatar.
+4. System leaves the "Current Password", "New Password", and "Repeat Password" fields blank.
+5. User modifies any profile information or enters new password details.
+6. User clicks the "Save changes" button.
+7. System validates the input (checking email format, avatar upload, and password matching/verification).
+8. System updates the user's data in the database.
+9. System displays a confirmation message to the user.
 
 **Exceptional Scenarios:**
-- **Exception 1 - Invalid Email Format:**
-  - Trigger: Email format validation fails (Step 4)
-  - Flow: System displays error indicating invalid email format
+- **Exception 1 - Password Mismatch:**
+  - Trigger: "New Password" and "Repeat Password" do not match (Step 7)
+  - Flow: System displays an error indicating passwords do not match.
 
-- **Exception 2 - Password Mismatch:**
-  - Trigger: Old password does not match stored password (Step 4)
-  - Flow: System displays error indicating incorrect old password
+- **Exception 2 - Incorrect Current Password:**
+  - Trigger: "Current Password" does not match the existing password when a change is attempted (Step 7)
+  - Flow: System displays an error indicating the current password is incorrect.
+
+- **Exception 3 - Invalid Data Format:**
+  - Trigger: Invalid email format or invalid avatar file (Step 7)
+  - Flow: System displays a validation error for the specific field.
 
 **Post-conditions:**
-1. Updated user profile is saved in the database
-2. User sees updated information after successful save
+1. User's profile information is updated in the database (if "Save changes" was clicked).
+2. The user's profile view reflects the new information.
 
 ---
 
@@ -197,6 +205,51 @@ A user modifies existing player information including PACSS attributes.
 **Post-conditions:**
 1. Updated player record is saved in the database
 2. Player can be used with updated attributes
+
+---
+
+### 2.3 Use Case: Delete Player
+
+**Actor:** User (Logged In)
+
+**Brief Description:**
+A user removes a player from the system.
+
+**Preconditions:**
+- User is logged in
+- Player exists in the database
+
+**Inputs:**
+1. Player to delete
+2. Confirmation (if applicable)
+
+**Successful Flow:**
+1. User accesses the Player Management interface.
+2. System displays a list of the user's players.
+3. User selects a player and clicks the "Delete" button.
+4. System checks if the player is currently in a team or a league.
+5. If the player is in a team:
+    a. System displays a warning: "Player is currently part of team {team name}".
+    b. User clicks the "Proceed" button.
+    c. System deletes the player record.
+    d. System updates the roster of the associated team in the database.
+    e. System displays a confirmation message.
+6. If the player is not in a team and not in a league:
+    a. System deletes the player record.
+    b. System displays a confirmation message.
+
+**Exceptional Scenarios:**
+- **Exception 1 - Player in an Active League:**
+  - Trigger: Player is currently participating in an active league (Step 4)
+  - Flow: System displays an error: "Player currently in a league, wait until the league finishes" and no changes are made.
+
+- **Exception 2 - Cancellation of Team Warning:**
+  - Trigger: User clicks "Cancel" on the team warning (Step 5b)
+  - Flow: System closes the warning and no changes are made.
+
+**Post-conditions:**
+1. The selected player is removed from the database.
+2. Associated team rosters are updated if the player was part of a team.
 
 ---
 
@@ -282,6 +335,46 @@ A user adds or removes players from an existing team.
 
 ---
 
+### 3.3 Use Case: Delete Team
+
+**Actor:** User (Logged In)
+
+**Brief Description:**
+A user removes a team from the system.
+
+**Preconditions:**
+- User is logged in
+- User owns the team
+- Team exists in the database
+
+**Inputs:**
+1. Team to delete
+2. Confirmation (implicit via button click)
+
+**Successful Flow:**
+1. User accesses the Teams interface.
+2. System displays a list of the user's teams.
+3. Each team is shown with two buttons: "Manage Team Players" and "Delete Team".
+4. User clicks the "Delete Team" button for the desired team.
+5. System validates that the team is not currently joined to a league or playing a friendly match.
+6. If valid, system deletes the team record.
+7. System displays a confirmation message to the user.
+
+**Exceptional Scenarios:**
+- **Exception 1 - Team Joined to League:**
+  - Trigger: Team has been joined to a league (Step 5)
+  - Flow: System displays an error: "Cannot delete team: it is currently part of league {league name}" and returns to the Teams interface.
+
+- **Exception 2 - Team Playing Friendly Match:**
+  - Trigger: Team is currently scheduled to play a friendly match (Step 5)
+  - Flow: System displays an error: "Cannot delete team: it is currently playing a friendly match" and returns to the Teams interface.
+
+**Post-conditions:**
+1. The selected team is removed from the database.
+2. Associated teams' rosters are not affected (players remain in system).
+
+---
+
 ## 4.0 League Management
 
 ### 4.1 Use Case: Create League
@@ -329,12 +422,7 @@ A user creates a new league with specific parameters for team competition.
 
 ---
 
-### 4.2 Use Case: Join League
-### Todo...
-
----
-
-### 4.3 Use Case: Schedule Matches
+### 4.2 Use Case: Schedule Matches
 
 **Actor:** User (Logged In)
 
@@ -378,8 +466,171 @@ A user schedules matches between teams within a league.
 
 ---
 
-### 4.4 Use Case: Leave League
-### Todo...
+### 4.3 Use Case: Join League via GUI
+
+**Actor:** User (Logged In)
+
+**Brief Description:**
+The user joins a public league through the main menu by selecting available teams and assigning behaviors to players before final confirmation.
+
+**Inputs:**
+1. League name (from main menu)
+2. Team selection from available teams
+3. Behavior assignments for each player
+4. Final "Join" button click
+
+**Preconditions:**
+- User is logged in
+- At least one public league exists and has available slots
+- User owns at least one available team
+
+**Successful Flow:**
+1. On the main menu, system displays a list of **strictly public leagues**.
+2. Each league shows a "Join" button next to it.
+3. User clicks the "Join" button for a desired league.
+4. System displays a small window (modal).
+5. In the modal, system displays available teams that can join the league.
+6. System **grays out** unavailable teams:
+   - Teams already participating in other leagues
+   - Teams with fewer than 6 players
+7. User selects an available team to join the league.
+8. System validates:
+	- Selected team is available (not in another league, has ≥6 players) 
+9. After selecting a team, system displays the players of that team in a list.
+10. Next to each player, a drop-down menu lists all available behaviors (including `default_behavior` as an option).
+11. The user assigns desired behaviors to players (behaviors may be assigned to multiple players; the same behavior can be selected for multiple players).
+12. User clicks the final "Join" button.
+13. System validates that the league has not reached maximum participant teams limit
+14. System registers team in league database with assigned behaviors.
+15. System redirects user to the league page/dashboard.
+
+**Exceptional Scenarios:**
+- **Exception 1 - League at Capacity:**
+  - Trigger: The league has reached its maximum number of participating teams (Step 12)
+  - Flow: System displays an error: "Cannot join league: it has reached maximum participant limit" and returns the user to the main menu.
+
+**Post-conditions:**
+1. Team is registered in the public league.
+2. Player behavior assignments are recorded in the database.
+3. User is redirected to the league page/dashboard.
+4. Team becomes unavailable for joining other leagues until it leaves this one or is deleted.
+
+---
+
+### 4.4 Use Case: Join Private League
+
+**Actor:** User (Logged In)
+
+**Brief Description:**
+The user joins a private league through the main menu by entering the league name and password, then selecting their team and assigning behaviors before joining.
+
+**Inputs:**
+1. League name (user enters to locate private league)
+2. Password (user enters for authentication)
+3. Team selection from available teams
+4. Behavior assignments for each player
+5. Final "Join" button click
+
+**Preconditions:**
+- User is logged in
+- At least one private league exists
+- League has not reached maximum participant limit
+- User owns at least one available team
+
+**Successful Flow:**
+1. On the main menu, user sees a "Join Private League" button.
+2. User clicks the "Join Private League" button.
+3. System displays a modal prompting for:
+   - **League Name** (to locate the private league)
+   - **Password** (for authentication)
+4. User enters the correct league name and password.
+5. System validates:
+   - League name matches an existing private league
+   - Password matches the league's password
+6. If validation succeeds, system displays a small window (modal) for team selection.
+7. In the modal, system displays available teams that can join the league.
+8. System **grays out** unavailable teams:
+   - Teams already participating in other leagues
+   - Teams with fewer than 6 players
+10. User selects an available team to join the league.
+11. After selecting a team, system displays the players of that team in a list.
+12. Next to each player, a drop-down menu lists all available behaviors (including `default_behavior` as an option).
+13. The user assigns desired behaviors to players (behaviors may be assigned to multiple players; same behavior can be selected for multiple players).
+14. User clicks the final "Join" button.
+15. System validates that the league has not reached maximum participant teams limit.
+16. System registers team in private league database with assigned behaviors.
+17. System redirects user to the league page/dashboard.
+
+**Exceptional Scenarios:**
+- **Exception 1 - Invalid League Name:**
+  - Trigger: User enters incorrect league name (Step 5)
+  - Flow: System displays error: "League not found" and returns user to main menu.
+
+- **Exception 2 - Invalid Password:**
+  - Trigger: User enters incorrect password (Step 5)
+  - Flow: System displays error: "Invalid password for this league" and returns user to main menu.
+
+- **Exception 3 - League at Capacity:**
+  - Trigger: The league has reached its maximum number of participating teams (Step 15)
+  - Flow: System displays an error: "Cannot join league: it has reached maximum participant limit" and returns the user to the main menu.
+
+**Post-conditions:**
+1. Team is registered in the private league.
+2. Player behavior assignments are recorded in the database.
+3. User is redirected to the league page/dashboard.
+4. Team becomes unavailable for joining other leagues until it leaves this one or is deleted.
+
+---
+
+### 4.5 Use Case: Leave League
+
+**Actor:** User (Logged In)
+
+**Brief Description:**
+The user leaves a league they have previously joined, releasing their team to be available for another league.
+
+**Inputs:**
+1. "Leave League" button click on the league menu/dashboard
+2. Confirmation (via confirmation dialog)
+
+**Preconditions:**
+- User is logged in
+- Team is currently assigned to a league
+- Match simulation has not started or league has not begun matches
+
+**Successful Flow:**
+1. On the league page/dashboard, user sees their team's status within the league.
+2. User clicks "Leave League" button for their team.
+3. System displays confirmation dialog: "Are you sure you want to leave this league? Your team will be available to join another league immediately." with "Confirm" and "Cancel" buttons.
+4. User clicks "Confirm" to proceed.
+5. System validates:
+   - League has not started (no active matches or quarter play has begun)
+6. If validation passes:
+   - System removes team from league database
+   - System preserves team's current score and stats (unaffected by leaving)
+   - System recalculates league fixtures and matchups:
+     - Removes all remaining scheduled matches involving the departing team
+     - Adjusts league standings if necessary
+1. System broadcasts real-time update via WebSocket.
+2. System redirects user to their main dashboard.
+3. Team is immediately available to join another league.
+4. System displays confirmation message: "Your team has left the league and is now available for other leagues."
+
+**Exceptional Scenarios:**
+- **Exception 1 - League Already Started:**
+  - Trigger: Attempt to leave when league has started (active matches or quarter play in progress) (Step 5)
+  - Flow: System displays error: "Cannot leave league: league matches have already started" and no changes are made.
+
+- **Exception 2 - Cancel Confirmation:**
+  - Trigger: User clicks "Cancel" in confirmation dialog (Step 4)
+  - Flow: Operation cancelled; user remains in the league with no changes made.
+
+**Post-conditions:**
+1. Team removed from league database.
+2. Team's score and stats preserved.
+3. League fixtures/matchups recalculated to exclude departing team.
+4. Team is immediately available for joining another league.
+5. WebSocket notification sent to all league participants.
 
 ---
 
@@ -431,7 +682,7 @@ A user creates a new behavior script for player AI actions during matches.
 **Actor:** User (Logged In)
 
 **Brief Description:**
-A user assigns a behavior script to a specific player for match execution.
+A user assigns a behavior script to a specific player for match execution. This can be done via the Behavior Management interface or when joining a league/friendly match.
 
 **Preconditions:**
 - User is logged in
@@ -445,27 +696,70 @@ A user assigns a behavior script to a specific player for match execution.
 3. Assignment confirmation
 
 **Successful Flow:**
-1. User accesses behavior assignment interface
-2. System displays available players and behaviors
-3. User selects player and behavior
-4. System validates assignment compatibility
-5. System assigns behavior to player
-6. System displays confirmation message
+1. User accesses behavior assignment interface.
+2. System displays available players and behaviors.
+3. User selects player and behavior.
+4. System validates assignment compatibility.
+5. System assigns behavior to player (recorded in database).
+6. System displays confirmation message.
 
 **Exceptional Scenarios:**
 - **Exception 1 - Player in Active Match:**
-  - Trigger: Attempt to assign behavior to player in active match (Step 4)
-  - Flow: System displays error indicating player cannot be modified during match
+  - Trigger: Attempt to assign behavior to player in active match (Step 3)
+  - Flow: System displays error indicating player cannot be modified during match.
+
+- **Exception 2 - Invalid Behavior:**
+  - Trigger: Selected behavior is deleted or invalid (Step 3)
+  - Flow: System displays error and prompts user to select a valid behavior.
 
 **Post-conditions:**
-1. Behavior is assigned to player
-2. Player will execute this behavior during matches
-3. Assignment is recorded in database
+1. Behavior is assigned to player in database.
+2. Player will execute this behavior during matches (until reassigned).
+3. Assignment persists until changed via interface or at match start.
 
 ---
 
 ### 5.3 Use Case: Delete Behavior
-### Todo...
+
+**Actor:** User (Logged In)
+
+**Brief Description:**
+A user removes a behavior script from the system. Custom behaviors can be deleted only if no player is currently using them.
+
+**Preconditions:**
+- User is logged in
+- Behavior exists in the database
+- User created the behavior
+- The behavior is NOT the system's `default_behavior` (which is non-deletable)
+
+**Inputs:**
+1. Behavior to delete
+2. Confirmation (implicit via button click)
+
+**Successful Flow:**
+1. User accesses the Behavior Management interface.
+2. System displays a list of the user's programmed behaviors (excluding `default_behavior`).
+3. Each behavior is shown with a "Delete" button.
+4. User clicks the "Delete" button for the desired behavior.
+5. System checks whether any player is currently using this behavior (assigned in database).
+6. If no player uses it, system deletes the behavior record.
+7. If a player used to use this behavior but is not currently assigned, that player's behavior automatically falls back to `default_behavior`.
+8. System displays a confirmation message to the user.
+
+**Exceptional Scenarios:**
+- **Exception 1 - Behavior Assigned to Active Player:**
+  - Trigger: A player is currently using this behavior (assigned in database) (Step 5)
+  - Flow: System displays an error: "Cannot delete behavior: it is currently in use by player {player name}".
+
+- **Exception 2 - Attempt to Delete Default Behavior:**
+  - Trigger: User attempts to delete `default_behavior` (Step 2)
+  - Flow: System hides `default_behavior` from the list or displays error: "Default behavior cannot be deleted".
+
+**Post-conditions:**
+1. The selected custom behavior is removed from the database.
+2. Players not using this behavior remain unaffected.
+3. Players who used this behavior but are not currently assigned will now use `default_behavior` in their next match.
+4. `default_behavior` remains in the database and cannot be deleted.
 
 ---
 
@@ -479,9 +773,10 @@ A user assigns a behavior script to a specific player for match execution.
 The system executes a scheduled match with AI-driven player behaviors.
 
 **Preconditions:**
+- User is logged in
 - Match is scheduled and active
-- Teams have players assigned
-- Players have behaviors assigned
+- Teams have players assigned (via team creation or league join)
+- Each player has an active behavior assignment in the database
 - System has access to WebSocket for real-time updates
 
 **Inputs:**
@@ -491,41 +786,173 @@ The system executes a scheduled match with AI-driven player behaviors.
 4. Match parameters
 
 **Successful Flow:**
-1. System identifies scheduled match
-2. System initializes match environment
-3. System loads player behaviors
-4. System starts match simulation
-5. System executes match quarters with real-time updates
-6. System updates match results in database
-7. System sends final results via WebSocket
+1. System identifies scheduled match.
+2. System initializes match environment.
+3. System loads player behaviors (from database assignment or falls back to `default_behavior` if unassigned).
+4. System starts match simulation.
+5. System executes match with real-time updates via WebSocket.
+6. System updates match results in database.
+7. System sends final results via WebSocket.
 
 **Exceptional Scenarios:**
-- **Exception 1 - Missing Player Behaviors:**
-  - Trigger: Player without assigned behavior (Step 3)
-  - Flow: System assigns default behavior or displays error
+- **Exception 1 - Player Without Active Behavior Assignment:**
+  - Trigger: Player has no behavior assigned in database (Step 3)
+  - Flow: System assigns `default_behavior` to the player automatically.
 
 - **Exception 2 - Match Execution Failure:**
   - Trigger: System error during simulation (Step 4)
-  - Flow: System logs error and stops match execution
+  - Flow: System logs error and stops match execution.
 
 **Post-conditions:**
-1. Match results are stored in database
-2. League standings are updated
-3. Spectators receive final results via WebSocket
+1. Match results are stored in database.
+2. League standings are updated.
+3. Spectators receive final results via WebSocket.
 
 ---
+
 ### 6.2 Use Case: Spectate Match
-### Todo...
+
+**Actor:** User (Logged In)
+
+**Brief Description:**
+A user watches an active match in real-time, receiving live score updates and event notifications via WebSocket.
+
+**Preconditions:**
+- User is logged in
+- Match is currently active (scheduled and in progress)
+- Match results are available
+
+**Inputs:**
+1. Spectate button click
+2. Optional: View type selection (scoreboard, live events, detailed view)
+
+**Successful Flow:**
+1. User accesses the league page and clicks "Spectate" from league dashboard.
+2. System validates that the match is active and not finished.
+3. System connects user to WebSocket for real-time updates.
+4. System displays initial match state: score, quarter time, teams, player count.
+5. System streams live events via WebSocket (goals scored, substitutions, quarters ending).
+6. User receives real-time notifications of all match events.
+7. When match ends, system displays final results and league standings update.
+
+**Exceptional Scenarios:**
+- **Exception 1 - Match Already Finished:**
+  - Trigger: Match status is "finished" (Step 2)
+  - Flow: System displays message: "Match has ended" and shows final results.
+
+- **Exception 2 - WebSocket Connection Lost:**
+  - Trigger: Network failure or server disconnect (Step 3)
+  - Flow: System reconnects automatically; if unsuccessful, displays error and offers retry.
+
+**Post-conditions:**
+1. Match results are visible.
+2. League standings reflect the match outcome.
+3. User session may persist for future updates.
 
 ---
 
 ### 6.3 Use Case: Switch Player
 
-### Todo...
+**Actor:** Team Owner (User Logged In)
+
+**Brief Description:**
+The team owner requests a player substitution during an active match, replacing one player with another available player.
+
+**Inputs:**
+1. Target quarter/break period
+2. Current player to replace
+3. Replacement player selection
+4. Confirmation (via "Switch Player" button)
+
+**Preconditions:**
+- User is logged in and owns the team
+- Match is currently active (in progress, not finished)
+- Team has a replacement player available who is not currently on the field
+- Current player can be substituted (1 maximum per quarter)
+
+**Successful Flow:**
+1. During an active match, system displays real-time scoreboard with current lineup.
+2. User accesses team management controls within the match interface.
+3. System displays available players for substitution (replacement roster).
+4. User selects "Switch Player" option and chooses:
+   - The current player to be substituted out
+   - A replacement player from the bench/roster
+5. System validates:
+   - Replacement player is not already on the field.
+   - Current team owner has not made any substitutions in the current quarter.
+6. User confirms substitution by clicking "Switch Player" button.
+7. System updates match simulation:
+   - Removes current player from active lineup
+   - Adds replacement player to active lineup
+8. System broadcasts real-time update via WebSocket
+9. System displays confirmation message: "Player {new_player} replaced {old_player}".
+10. Match simulation continues with new player lineup.
+
+**Exceptional Scenarios:**
+- **Exception 1 - No Replacement Player Available:**
+  - Trigger: User attempts substitution but no valid replacement exists (Step 3)
+  - Flow: System displays error: "Cannot substitute: no available replacement player" and no changes are made.
+
+- **Exception 2 - Substitution Outside Allowed Period:**
+  - Trigger: Attempted substitution during quarter play (not during break) (Step 5)
+  - Flow: System displays warning: "Substitutions only allowed during breaks. Please wait until the next quarter or cooling break." and no changes are made.
+
+**Exception 3 - No Replacements left:**
+  - Trigger: User attempts substitution but they already substituted one player (Step 5)
+  - Flow: System displays error: "Cannot substitute: Please wait until the next quarter or cooling break." and no changes are made.
+
+**Post-conditions:**
+1. Player substitution recorded in match database.
+2. Real-time WebSocket update sent to spectators and user.
+3. Match simulation continues with updated lineup.
+4. League standings continue unaffected (substitution doesn't change score).
 
 ---
 
 ### 6.4 Use Case: Switch Player Behavior
 
-### Todo...
+**Actor:** Team Owner (User Logged In)
+
+**Brief Description:**
+The team owner changes the behavior script assigned to a player during an active match.
+
+**Inputs:**
+1. Target player
+2. New behavior selection (from available behaviors including `default_behavior`)
+3. Confirmation (via "Switch Behavior" button)
+
+**Preconditions:**
+- User is logged in and owns the team
+- Match is currently active (in progress, not finished)
+- Target player is currently on the field
+- New behavior exists in database and is valid
+
+**Successful Flow:**
+1. During an active match, system displays current lineup.
+2. User accesses team management controls within the match interface.
+3. System displays current behavior assigned to each player on the field.
+4. User selects a player and clicks "Switch Behavior" option.
+5. Drop-down menu appears listing all available behaviors (including `default_behavior`).
+6. User selects desired new behavior for the target player.
+7. User confirms by clicking "Switch Behavior" button.
+8. System updates match simulation:
+   - Changes player's assigned behavior in database
+   - Future events for this player will follow new behavior
+1. System broadcasts real-time update via WebSocket.
+2. System displays confirmation message: "Player {player} now using behavior {new_behavior}".
+3. Match simulation continues with updated behavior.
+
+**Exceptional Scenarios:**
+- **Exception 1 - Behavior Not Found:**
+  - Trigger: Selected behavior does not exist or is invalid (Step 7)
+  - Flow: System displays an error and prompts user to choose another behavior or try again.
+
+- **Exception 3 - Player Not Currently on Field:**
+  - Trigger: Attempt to change behavior for player who was substituted out (Step 2)
+  - Flow: System displays warning: "Cannot change behavior for off-field player".
+
+**Post-conditions:**
+1. Player behavior assignment updated in the match.
+2. Real-time WebSocket update sent to spectators and user.
+3. Match simulation continues with player following new behavior rules.
 
