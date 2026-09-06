@@ -143,4 +143,39 @@ graph LR
 ```
 
 
+## Caso De Uso #30: Unirse A Liga Privada
+
+## Actor Principal: Usuario
+
+## Precondicion: El usuario debe estar autenticado en el sistema, poseer un equipo y tener seleccionados 6 jugadores.
+
+## Escenario Exitoso Principal:
+
+    El usuario se dirige al apartado de ligas y selecciona una liga privada del listado.
+
+    El sistema despliega un campo de texto solicitando la contraseña de acceso.
+
+    El usuario ingresa la clave y pulsa el boton "Unirse".
+
+    El sistema verifica que la contraseña coincida con los registros y que no se haya alcanzado el limite de equipos inscriptos.
+
+    El sistema registra al club del usuario como participante de la liga y muestra un mensaje de "Inscripcion exitosa".
+
+## Escenarios Excepcionales / Alternativos:
+
+    4.a) La contraseña ingresada es incorrecta: El sistema rechaza la inscripcion, muestra un mensaje de "Contraseña incorrecta" y mantiene el campo de texto abierto para un nuevo intento.
+
+    4.b) La liga alcanzo su limite de equipos permitidos: El sistema niega la inscripcion, muestra un mensaje de "Liga sin cupos disponibles" y devuelve al usuario al listado de ligas.
+
+```mermaid
+graph LR
+    U[Usuario]
+    P((Unirse a Liga Privada))
+    DB[(BD: Ligas)]
+    
+    U -->|Solicitud y Contraseña| P
+    P ---|Validación credenciales y cupos| DB
+    DB -->|Estado de cupos y Auth| P
+    P -->|Confirmación / Rechazo| U
+```
 
