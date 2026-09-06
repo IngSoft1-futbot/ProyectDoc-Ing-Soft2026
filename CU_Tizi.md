@@ -36,6 +36,36 @@ graph LR
 
 
 
+### Caso De Uso #6: Unirse A Liga Publica
+
+### Actor Principal: Usuario
+
+### Precondicion: El usuario debe estar autenticado en el sistema, poseer un equipo y tener seleccionados 6 jugadores  
+
+### Escenario Exitoso Principal: 
+1. El usuario se dirige al apartado de ligas y selecciona una liga publica del listado de ligas  
+2. El usuario pulsa el boton "Unirse"
+3. El sistema verifica que no haya alcanzado el limite de equipos inscriptos
+4. El sistema registra al club del usuario como participante de la liga y muestra un mensaje de "Inscripcion exitosa".
+
+### Escenarios Excepcionales / Alternativos: 
+3.a) La liga alcanzo su limite de equipos permitidos.
+  El sistema niega la inscripcion, muestra un mensaje de "Liga sin cupos disponibles" y devuelve al usuario al listado de ligas.
+
+
+### DFD 
+```mermaid
+graph LR
+    U[Usuario]
+    P((Unirse a Liga))
+    DB[(BD: Ligas)]
+    
+    U -->|Solicitud de Ingreso| P
+    P ---|Ingreso a liga| DB
+    DB -->|Datos de la Liga| P
+    P -->|Respuesta de Solicitud| U
+``````
+
 
 
 
