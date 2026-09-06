@@ -18,20 +18,17 @@ https://api.futbot.com/v1/
 ### Success Response
 ```json
 {
-  "status": "200",
+  "status": "Code",
   "data": {},
-  "message": "Operation completed successfully"
+  "message": "Operation completed successfully."
 }
 ```
 
 ### Error Response
 ```json
 {
-  "status": "error",
-  "error": {
-    "code": "ERROR_CODE",
-    "message": "Error description"
-  }
+  "status": "error_code",
+  "message": "error description"
 }
 ```
 
@@ -56,16 +53,24 @@ https://api.futbot.com/v1/
 **Response:**
 ```json
 {
-  "status": "200",
+  "status": "201",
   "data": {
     "user_id": "integer",
     "username": "string",
     "email": "string",
     "name": "string"
   },
-  "message": "User registered successfully"
+  "message": "User registered successfully."
 }
 ```
+**Expected Errors:**
+```json
+{
+  "status": "400 Bad Request",
+  "message": "Email or username already in use."
+}
+```
+
 
 #### 3.5.2 User Login
 **POST** `/auth/login`
@@ -86,14 +91,39 @@ https://api.futbot.com/v1/
     "access_token": "string",
     "token_type": "bearer"
   },
-  "message": "Login successful"
+  "message": "Login successful."
+}
+```
+
+**Expected Errors:**
+```json
+{
+  "status": "401 Unauthorized",
+  "message": "Invalid email or password."
 }
 ```
 
 ### User Management Endpoints
 
-#### 3.5.3 Get User Profile
-**GET** `/users/profile`
+#### 3.5.3 List Users
+**GET**  `/users`
+**Response:**
+```json
+{
+  "status": "200",
+  "data": [
+    {
+      "user_id": "integer",
+      "name": "string",
+      "avatar": "string"
+    }
+  ],
+  "message": "Users listed successfully."
+}
+```
+
+#### 3.5.4 Get User Profile
+**GET** `/users/{user_id}/profile`
 
 **Response:**
 ```json
@@ -107,12 +137,20 @@ https://api.futbot.com/v1/
     "avatar": "string",
     "created_at": "datetime"
   },
-  "message": "Profile retrieved successfully"
+  "message": "Profile retrieved successfully."
 }
 ```
 
-#### 3.5.4 Update User Profile
-**PUT** `/users/profile`
+**Expected Error:**
+```json
+{
+  "status": "404 Not Found",
+  "message": "User does not exist."
+}
+```
+
+#### 3.5.5 Update User Profile
+**PUT** `/users/{user_id}/profile`
 
 **Request Body:**
 ```json
@@ -136,27 +174,41 @@ https://api.futbot.com/v1/
     "name": "string",
     "avatar": "string"
   },
-  "message": "Profile updated successfully"
+  "message": "Profile updated successfully."
+}
+```
+**Expected Error:**
+```json
+{
+  "status": "401 Unauthorized",
+  "message": "Invalid or missing token."
+}
+```
+
+```json
+{
+  "status": "403 Forbidden",
+  "message": "Attempting to update another user's profile."
 }
 ```
 
 ### Player Management Endpoints
 
-#### 3.5.5 Create Player
-**POST** `/players`
+#### 3.5.6 Create Player
+**POST** `/users/{user_id}/players`
 
 **Request Body:**
 ```json
 {
   "name": "string",
+  "shirt_numb": "integer",
   "pacss_attributes": {
     "power": "integer",
-    "speed": "integer",
-    "dexterity": "integer",
+    "agility": "integer",
     "control": "integer",
+    "speed": "integer",
     "strength": "integer"
   },
-  //dorsal
   "team_id": "integer"
 }
 ```
@@ -164,25 +216,41 @@ https://api.futbot.com/v1/
 **Response:**
 ```json
 {
-  "status": "200",
+  "status": "201",
   "data": {
     "player_id": "integer",
     "name": "string",
+    "shirt_numb": "integer",
     "pacss_attributes": {
       "power": "integer",
-      "speed": "integer",
-      "dexterity": "integer",
+      "agility": "integer",
       "control": "integer",
+      "speed": "integer",
       "strength": "integer"
     },
     "team_id": "integer"
   },
-  "message": "Player created successfully"
+  "message": "Player created successfully."
 }
 ```
 
-#### 3.5.6 Get Player
-**GET** `/players/{player_id}`
+**Expected Error:**
+```json
+{
+  "status": "400 Bad Request",
+  "message": "PACSS attributes exceed the maximum allowed points."
+}
+```
+
+```json
+{
+  "status": "404 Not Found",
+  "message": "Team does not exist."
+}
+```
+
+#### 3.5.7 Get Player
+**GET** `/users/{user_id}/players/{player_id}`
 
 **Response:**
 ```json
@@ -193,57 +261,53 @@ https://api.futbot.com/v1/
     "name": "string",
     "pacss_attributes": {
       "power": "integer",
-      "speed": "integer",
-      "dexterity": "integer",
+      "agility": "integer",
       "control": "integer",
+      "speed": "integer",
       "strength": "integer"
     },
     "team_id": "integer"
   },
-  "message": "Player retrieved successfully"
+  "message": "Player retrieved successfully."
 }
 ```
 
-#### 3.5.7 Update Player    //delete
-**PUT** `/players/{player_id}`
-
-**Request Body:**
+**Expected Error:**
 ```json
 {
-  "name": "string",
-  "pacss_attributes": {
-    "power": "integer",
-    "speed": "integer",
-    "dexterity": "integer",
-    "control": "integer",
-    "strength": "integer"
-  }
+  "status": "404 Not Found",
+  "message": "Player not found."
 }
 ```
+
+#### 3.5.8 Delete Player
+**DELETE** `/users/{user_id}/players/{player_id}`
 
 **Response:**
 ```json
 {
   "status": "200",
-  "data": {
-    "player_id": "integer",
-    "name": "string",
-    "pacss_attributes": {
-      "power": "integer",
-      "speed": "integer",
-      "dexterity": "integer",
-      "control": "integer",
-      "strength": "integer"
-    }
-  },
-  "message": "Player updated successfully"
+  "message": "Player deleted successfully."
+}
+```
+**Expected Error:**
+```json
+{
+  "status": "403 Forbidden",
+  "message": "User does not own the player."
 }
 ```
 
+```json
+{
+  "status": "404 Not Found",
+  "message": "Player not found."
+}
+```
 ### Team Management Endpoints
 
-#### 3.5.8 Create Team
-**POST** `/teams`
+#### 3.5.9 Create Team
+**POST** `/users/{user_id}/teams`
 
 **Request Body:**
 ```json
@@ -257,19 +321,11 @@ https://api.futbot.com/v1/
 **Response:**
 ```json
 {
-  "status": "200",
+  "status": "201",
   "data": {
     "team_id": "integer",
     "name": "string",
     "player_ids_titulares": [
-      {
-        "player_id": "integer",
-        "name": "string"
-      },
-      {
-        "player_id": "integer",
-        "name": "string"
-      },
       {
         "player_id": "integer",
         "name": "string"
@@ -279,23 +335,23 @@ https://api.futbot.com/v1/
       {
         "player_id": "integer",
         "name": "string"
-      },
-      {
-        "player_id": "integer",
-        "name": "string"
-      },
-      {
-        "player_id": "integer",
-        "name": "string"
       }
     ]
   },
-  "message": "Team created successfully"
+  "message": "Team created successfully."
 }
 ```
 
-#### 3.5.9 Get Team
-**GET** `/teams/{team_id}`
+**Expected Error:**
+```json
+{
+  "status": "400 Bad Request",
+  "message": "Insufficient number of players to create a team."
+}
+```
+
+#### 3.5.10 Get Team
+**GET** `/users/{user_id}/teams/{team_id}`
 
 **Response:**
 ```json
@@ -318,14 +374,48 @@ https://api.futbot.com/v1/
       }
     ]
   },
-  "message": "Team retrieved successfully"
+  "message": "Team retrieved successfully."
+}
+```
+
+**Expected Error:**
+```json
+{
+  "status": "404 Not Found",
+  "message": "Team not found."
+}
+```
+
+#### 3.5.11 Delete Team
+**DELETE** `/users/{user_id}/teams/{team_id}`
+
+**Response:**
+```json
+{
+  "status": "200",
+  "message": "Team deleted successfully."
+}
+```
+
+**Expected Error:**
+```json
+{
+  "status": "403 Forbidden",
+  "message": "User does not own this team."
+}
+```
+
+```json
+{
+  "status": "409 Conflict",
+  "message": "Cannot delete team while register in an active league."
 }
 ```
 
 ### League Management Endpoints
 
-#### 3.5.10 Create League
-**POST** `/leagues`
+#### 3.5.12 Create League
+**POST** `/users/{user_id}/leagues`
 
 **Request Body:**
 ```json
@@ -336,26 +426,68 @@ https://api.futbot.com/v1/
   "duration": "integer",
   "min_teams": "integer",
   "max_teams": "integer",
-  "fecha_inicio": "integer",
-  "incritos": "[Equipo]"
+  "fecha_inicio": "integer"
 }
 ```
 
 **Response:**
 ```json
 {
-  "status": "200",
+  "status": "201",
   "data": {
     "league_id": "integer",
     "name": "string",
     "is_private": "boolean"
   },
-  "message": "League created successfully"
+  "message": "League created successfully."
 }
 ```
 
-#### 3.5.11 Get League
-**GET** `/leagues/{league_id}`
+**Expected Error:**
+```json
+{
+  "status": "400 Bad Request",
+  "message": "Min teams is greater than Max teams."
+}
+```
+
+#### 3.5.13 List All Leagues
+**GET** `/leagues`
+
+**Response:**
+```json
+{
+  "status": "200",
+  "data": [
+    {
+      "league_id": "integer",
+      "name": "string",
+      "is_private": "boolean"
+    }
+  ],
+  "message": "Leagues listed successfully."
+}
+```
+
+#### 3.5.14 List User Leagues
+**GET** `/users/{user_id}/leagues`
+
+**Response**
+```json
+{
+  "status": "200",
+  "data": [
+    {
+      "name": "string",
+      "league_id": "integer"
+    }
+  ],
+  "message": "Leagues retraived successfully."
+}
+```
+
+#### 3.5.15 Get User League
+**GET** `/users/{user_id}/leagues/{league_id}`
 
 **Response:**
 ```json
@@ -380,19 +512,33 @@ https://api.futbot.com/v1/
       }
     ]
   },
-  "message": "League retrieved successfully"
+  "message": "League retrieved successfully."
+}
+```
+
+**Expected Error:**
+```json
+{
+  "status": "403 Forbidden",
+  "message": "User is not a participant and league is private."
+}
+```
+
+```json
+{
+  "status": "404 Not Found",
+  "message": "League not found."
 }
 ```
 
 ### Behavior Management Endpoints
 
-#### 3.5.12 Create Behavior
-**POST** `/behaviors`
+#### 3.5.16 Create Behavior
+**POST** `/users/{user_id}/behaviors`
 
 **Request Body:**
 ```json
 {
-  "id": "integer",
   "name": "string",
   "code": "string"
 }
@@ -401,37 +547,86 @@ https://api.futbot.com/v1/
 **Response:**
 ```json
 {
-  "status": "200",
+  "status": "201",
   "data": {
     "behavior_id": "integer",
     "name": "string",
-    "description": "string"
   },
-  "message": "Behavior created successfully"
+  "message": "Behavior created successfully."
 }
 ```
 
-#### 3.5.13 Get Behavior
-**GET** `/behaviors/{behavior_id}`
+**Expected Error:**
+```json
+{
+  "status": "400 Bad Request",
+  "message": "Syntax error in provided Python code."
+}
+```
+
+#### 3.5.17 List Behaviors
+**GET** `/users/{user_id}/behaviors`
 
 **Response:**
 ```json
 {
   "status": "200",
+  "data": [
+    {
+      "name": "string"
+    }
+  ],
+  "message": "Behaviors listed successfully."
+}
+```
+
+#### 3.5.18 Get Behavior
+**GET** `/users/{user_id}/behaviors/{behavior_id}`
+
+**Response:**
+```json
+{ 
+  "status": "200",
   "data": {
     "behavior_id": "integer",
     "name": "string",
-    "description": "string",
     "code": "string"
   },
-  "message": "Behavior retrieved successfully"
+  "message": "Behavior retrieved successfully."
+}
+```
+
+**Expected Error:**
+```json
+{
+  "status": "404 Not Found",
+  "message": "Behavior not found."
+}
+```
+
+#### 3.5.19 Delete Behavior
+**DELETE** `/users/{user_id}/behaviors/{behavior_id}`
+
+**Response:**
+```json
+{
+  "status": "200",
+  "message": "Behavior deleted successfully."
+}
+```
+
+**Expected Error:**
+```json
+{
+  "status": "409 Conflict",
+  "message": "Cannot delete behavior while assigned to an active player."
 }
 ```
 
 ### Match Management Endpoints
 
-#### 3.5.14 Schedule Match
-**POST** `/matches/schedule`
+#### 3.5.20 Schedule Match
+**POST** `/leagues/{league_id}/matches/schedule`
 
 **Request Body:**
 ```json
@@ -446,7 +641,7 @@ https://api.futbot.com/v1/
 **Response:**
 ```json
 {
-  "status": "200",
+  "status": "201",
   "data": {
     "match_id": "integer",
     "league_id": "integer",
@@ -454,12 +649,20 @@ https://api.futbot.com/v1/
     "away_team": "string",
     "scheduled_at": "datetime"
   },
-  "message": "Match scheduled successfully"
+  "message": "Match scheduled successfully."
 }
 ```
 
-#### 3.5.15 Get Match
-**GET** `/matches/{match_id}`
+**Expected Error:**
+```json
+{
+  "status": "400 Bad Request",
+  "message": "Schedule conflict or teams do not belong to this league."
+}
+```
+
+#### 3.5.21 Get Match
+**GET** `/leagues/{league_id}/matches/{match_id}`
 
 **Response:**
 ```json
@@ -477,9 +680,18 @@ https://api.futbot.com/v1/
       "away_score": "integer"
     }
   },
-  "message": "Match retrieved successfully"
+  "message": "Match retrieved successfully."
 }
 ```
+
+**Expected Error:**
+```json
+{
+  "status": "404 Not Found",
+  "message": "Match not found."
+}
+```
+
 ## 4. Real-Time Communication (WebSockets)
 
 To enable live updates during matches, the system supports WebSocket connections in addition to REST endpoints. All WebSocket connections must include a valid JWT token in the `Authorization` header as `Bearer <token>`, matching the standard REST authentication method defined in Section **3.2**.
@@ -489,7 +701,7 @@ To enable live updates during matches, the system supports WebSocket connections
 - **Protocol:** WebSocket (RFC 6455)
 - **Base Domain:** The connection path is relative to the application's domain (e.g., `wss://api.futbot.com/v1/matches/{match_id}/websocket`).
 
-### 4.1 Server-to-Client Messages
+### 4.2 Server-to-Client Messages
 The server broadcasts events to all connected clients (spectators/coaches) during a match.
 
 | Event Type | Description | Data Example |
@@ -498,7 +710,7 @@ The server broadcasts events to all connected clients (spectators/coaches) durin
 | `match_event` | A specific event occurred (goal, behavior switches, player switches) | ```json {"type": "match_event", "data": {"event": "goal", "player": "Player A", "minute": 12}}``` |
 | `substitution_event` | A substitution was made | ```json {"type": "substitution_event", "data": {"player_out": "Player X", "player_in": "Player Y"}}``` |
 
-### 4.1 Client-to-Server Messages
+### 4.3 Client-to-Server Messages
 Clients can send specific commands during a match.
 
 | Event Type | Description | Data Example |
@@ -508,8 +720,6 @@ Clients can send specific commands during a match.
 ---
 
 ## 5. Standard HTTP Status Codes
-
-While custom error codes are returned in the JSON payload (as defined in Section **3.6 Error Codes**), the API uses standard HTTP status codes to indicate the outcome of requests.
 
 | Code | Description |
 |------|-------------|
