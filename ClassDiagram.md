@@ -20,6 +20,7 @@ classDiagram
         +List~Jugador~ jugadoresSuplentes
         
         +crearEquipo()
+        +aptoLiga()
         +unirseALiga()
         +editarEquipo()
         +eliminarEquipo()
@@ -60,6 +61,7 @@ classDiagram
         +validarSeguridad()
         +editarComportamiento()
         +eliminarComportamiento()
+        +comportamientoEnUso()
     }
 
     class Liga {
