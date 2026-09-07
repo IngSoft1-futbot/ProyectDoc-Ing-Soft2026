@@ -39,7 +39,6 @@ classDiagram
         +int id
         +int dorsal
         +String nombre
-        +Comportamiento compJugador
         +int power
         +int agility
         +int control
@@ -131,6 +130,6 @@ classDiagram
 
     Partido --> Resultado: tendra
 
-    Usuario --> RankingGlobal: compuesta
+    Usuario "*"-->"1" RankingGlobal: compuesta
     
 ```
