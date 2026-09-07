@@ -1,6 +1,6 @@
 ## API de Comportamientos 
 
--Esta libreria proporciona las herramientas y la documentacion necesaria para que los usuarios puedan diseñar y programar la logica de comportamiento de sus jugadores utilizando el lenguaje Python. El sistema del juego procesara las decisiones tomadas en cada turno y ejecutara los comportamientos, resolviendo su exito y rendimiento fisico de forma automatica mediante los atributos del sistema PACSS (Posicionamiento, Ataque, Control, Velocidad y Fuerza) del jugador en cuestion.
+-Esta libreria proporciona las herramientas y la documentacion necesaria para que los usuarios puedan diseñar y programar la logica de comportamiento de sus jugadores utilizando el lenguaje Python. El sistema del juego procesara las decisiones tomadas en cada turno y ejecutara los comportamientos, resolviendo su exito y rendimiento fisico de forma automatica mediante los atributos del sistema PACSS (POWER, AGILITY, CONTROL , SPEED y STRENGTH) del jugador en cuestion.
 
 ## Punto de Entrada: El metodo jugar_turno
 
@@ -16,7 +16,7 @@
 
 ## ─── CATALOGO DE PRIMITIVAS ───
 
-# moverse_hacia(x: float, y: float, porcentaje_velocidad: float) -> None
+# moverse_hacia(x: float, y: float, porcentaje_velocidad: int) -> None
 
 > Descripcion: Ordena al jugador trasladarse hacia las coordenadas (x, y) otorgadas como parametro, utilizando un porcentaje de velocidad coherente a su atributo speed.
 
@@ -48,11 +48,11 @@
 
 - STRENGTH: El exito del robo se calcula mediante una disputa directa de este valor contra la fuerza del oponente.
 
-# patear_pelota(x: float, y: float, porcentaje_fuerza: float) -> None
+# patear_pelota(x: float, y: float, porcentaje_fuerza: int) -> None
 
 > Descripcion: El jugador ejecuta un golpe sobre la pelota con la direccion de las coordenadas (x, y) utilizando una fraccion de la fuerza maxima del jugador.
 
-> Impacto en el Estado: Transfiere un vector de velocidad a la pelota y aplica un retraso temporal a la capacidad del jugador para volver a golpear. 
+> Impacto en el Estado: Impulsa la pelota con una velocidad y dirección determinadas, y aplica un retraso temporal a la capacidad del jugador para volver a golpear.
 
 > Atributos evaluados:
 
@@ -62,9 +62,9 @@
 
 - AGILITY: Determina la cantidad de ticks de penalizacion que sufrira el jugador antes de poder efectuar un nuevo disparo.
 
-# pasar_pelota(x: float, y: float, porcentaje_fuerza: float) -> None
+# pasar_pelota(x: jugador, porcentaje_fuerza: int) -> None
 
-> Descripcion: El jugador realiza un pase para un compañero hacia las coordenadas otorgadas en los parametros para la circulacion tactica del juego.
+> Descripcion: El jugador realiza un pase hacia un compañero especificado en la ID para la circulacion tactica del juego.
 
 > Impacto en el Estado: Transfiere un vector de velocidad a la pelota e impone un retraso temporal al emisor que realiza el pase.
 
@@ -76,14 +76,5 @@
 
 - AGILITY: Determina la cantidad de ticks de penalizacion de inactividad que sufrira el jugador tras ejecutar el envio.
 
-# proteger_pelota() -> None
-
-> Descripcion: El jugador utiliza el cuerpo como barrera para evitar perder la posesion de la pelota ante la presion de un rival.
-
-> Impacto en el Estado: Reduce casi a cero el vector de velocidad de traslacion del bot y de la pelota por el choque de resistencia entre ambos jugadores
-
-> Atributos evaluados:
-
-- STRENGTH: Define la capacidad del jugador para absorber los choques, evitar ser desplazado y retener el balon de forma exitosa frente a la marca rival.
 
 
