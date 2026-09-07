@@ -65,11 +65,11 @@ The system will provide:
 - Player attribute system with 5 statistics:
   - **Power:** Amount of force a player can hit the ball with
   - **Speed:** Movement speed of the player
-  - **Dexterity:** Time required for the player to kick the ball again (recovery time)
+  - **Agility:** Time required for the player to kick the ball again (recovery time)
   - **Control:** Maximum distance from which the player can kick the ball
   - **Strength:** Probability of winning a duel against another player
-- Players allocate exactly 10 PACSS points during creation
-- Minimum of 3 points required per attribute
+- Players allocate exactly 300 PACSS points during creation
+- Minimum of 20 points required per attribute
 
 ---
 
@@ -111,7 +111,7 @@ The system is organized into four core functional areas based on DFD Level 1 pro
 
 **Replacement Player:** Substitute players (3 required) available to enter matches when main players are unavailable
 
-**Leaderboard:** Ranking system within a league tracking team performance metrics (Wins, Losses, Total Goals, Owner name)
+**Leaderboard:** Ranking system within a league tracking team performance metrics (Wins, Losses, Total Goals, points, Owner name). Point values are determined as described, 3 points for a victory, 1 point for a draw, and 0 points for a loss.
 
 **Friendly Match:** Unofficial matches between teams that are not part of a league structure
 
@@ -125,7 +125,7 @@ The system is organized into four core functional areas based on DFD Level 1 pro
 
 **Constraints:**
 - Each team must have exactly 3 Main players and 3 Replacement players for league participation
-- Match duration is limited to ≤ 5 minutes or equivalent in ticks
+- Match duration depends of the leagues rules, divided by a half-time break and 2 cooling breaks.
 - Minimum match start time must be greater than 1 minute from current time
 - Teams cannot participate in multiple leagues simultaneously
 - Players cannot be assigned to multiple teams simultaneously
