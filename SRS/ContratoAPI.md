@@ -304,6 +304,7 @@ https://api.futbot.com/v1/
   "message": "Player not found."
 }
 ```
+
 ### Team Management Endpoints
 
 #### 3.5.9 Create Team
@@ -313,8 +314,18 @@ https://api.futbot.com/v1/
 ```json
 {
   "name": "string",
-  "player_ids_titulares": ["integer"],
-  "player_ids_suplentes": ["integer"]
+  "jugadores_titulares": [
+    {
+      "player_id": "integer",
+      "behavior_id": "integer"
+    }
+  ],
+  "jugadores_suplentes": [
+    {
+      "player_id": "integer",
+      "behavior_id": "integer"
+    }
+  ]
 }
 ```
 
@@ -325,20 +336,22 @@ https://api.futbot.com/v1/
   "data": {
     "team_id": "integer",
     "name": "string",
-    "player_ids_titulares": [
+    "jugadores_titulares": [
       {
         "player_id": "integer",
-        "name": "string"
+        "name": "string",
+        "behavior_id": "integer"
       }
     ],
-    "player_ids_suplentes": [
+    "jugadores_suplentes": [
       {
         "player_id": "integer",
-        "name": "string"
+        "name": "string",
+        "behavior_id": "integer"
       }
     ]
   },
-  "message": "Team created successfully."
+  "message": "Team created successfully"
 }
 ```
 
@@ -386,7 +399,46 @@ https://api.futbot.com/v1/
 }
 ```
 
-#### 3.5.11 Delete Team
+#### 3.5.11 Assign Behavior to Player
+**PUT** `/users/{user_id}/teams/{team_id}/players/{player_id}/behavior`
+
+**Request body:**
+```json
+{
+  "behavior_id": "integer"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "200",
+  "data": {
+    "player_id": "integer",
+    "behavior_id": "integer"
+  },
+  "message": "Behavior assigned successfully"
+}
+```
+
+**Expected Errors:**
+```json
+{
+  "status": "404 Not Found",
+  "message": "Player or behavior does not exist."
+}
+```
+
+```json
+{
+  "status": "409 Conflict",
+  "message": "Cannot change behavior while the player is in an active match."
+}
+```
+
+
+
+#### 3.5.12 Delete Team
 **DELETE** `/users/{user_id}/teams/{team_id}`
 
 **Response:**
@@ -414,7 +466,7 @@ https://api.futbot.com/v1/
 
 ### League Management Endpoints
 
-#### 3.5.12 Create League
+#### 3.5.13 Create League
 **POST** `/users/{user_id}/leagues`
 
 **Request Body:**
@@ -451,7 +503,7 @@ https://api.futbot.com/v1/
 }
 ```
 
-#### 3.5.13 List All Leagues
+#### 3.5.14 List All Leagues
 **GET** `/leagues`
 
 **Response:**
@@ -469,7 +521,7 @@ https://api.futbot.com/v1/
 }
 ```
 
-#### 3.5.14 List User Leagues
+#### 3.5.15 List User Leagues
 **GET** `/users/{user_id}/leagues`
 
 **Response**
@@ -486,7 +538,7 @@ https://api.futbot.com/v1/
 }
 ```
 
-#### 3.5.15 Get User League
+#### 3.5.16 Get User League
 **GET** `/users/{user_id}/leagues/{league_id}`
 
 **Response:**
@@ -530,10 +582,80 @@ https://api.futbot.com/v1/
   "message": "League not found."
 }
 ```
+#### 3.5.17 Join League
+**POST** `/league/{league_id}/join`
+
+**Request Body:**
+```json
+{
+  "team_id": "integer",
+  "password": "string"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "200",
+  "data": {
+    "league_id": "integer",
+    "team_id": "integer"
+  },
+  "message": "Team successfully joined the league"
+}
+```
+
+**Expected Error:**
+```json
+{
+  "status": "400 Bad Request",
+  "message": "League has already reached the maximum number of teams or team is already registered."
+}
+```
+
+```json
+{
+  "status": "403 Forbidden",
+  "message": "Incorrect password for private league."
+}
+```
+
+```json
+{
+  "status": "404 Not Found",
+  "message": "League or team not found."
+}
+```
+
+#### 3.5.18 Leave League
+**DELETE** `/leagues/{league_id}/teams/{team_id}`
+
+**Response:**
+```json
+{
+  "status": "200",
+  "message": "Team successfully removed from the league."
+}
+```
+
+**Expected Errors:**
+```json
+{
+  "status": "403 Forbidden",
+  "message": "User does not own this team."
+}
+```
+
+```json
+{
+  "status": "409 Conflict",
+  "message": "Cannot leave a league that has already started."
+}
+```
 
 ### Behavior Management Endpoints
 
-#### 3.5.16 Create Behavior
+#### 3.5.19 Create Behavior
 **POST** `/users/{user_id}/behaviors`
 
 **Request Body:**
@@ -564,7 +686,7 @@ https://api.futbot.com/v1/
 }
 ```
 
-#### 3.5.17 List Behaviors
+#### 3.5.20 List Behaviors
 **GET** `/users/{user_id}/behaviors`
 
 **Response:**
@@ -580,7 +702,7 @@ https://api.futbot.com/v1/
 }
 ```
 
-#### 3.5.18 Get Behavior
+#### 3.5.21 Get Behavior
 **GET** `/users/{user_id}/behaviors/{behavior_id}`
 
 **Response:**
@@ -604,7 +726,7 @@ https://api.futbot.com/v1/
 }
 ```
 
-#### 3.5.19 Delete Behavior
+#### 3.5.22 Delete Behavior
 **DELETE** `/users/{user_id}/behaviors/{behavior_id}`
 
 **Response:**
@@ -625,7 +747,7 @@ https://api.futbot.com/v1/
 
 ### Match Management Endpoints
 
-#### 3.5.20 Schedule Match
+#### 3.5.23 Schedule Match
 **POST** `/leagues/{league_id}/matches/schedule`
 
 **Request Body:**
@@ -661,7 +783,45 @@ https://api.futbot.com/v1/
 }
 ```
 
-#### 3.5.21 Get Match
+#### 3.5.24 Start Match Simulacion
+**POST** `/leagues/{league_id}/matches/match_id/start`
+
+**Response:**
+```json
+{
+  "status": "200",
+  "data": {
+    "match_id": "integer",
+    "status": "in_progress",
+    "started_at": "datetime"
+  },
+  "message": "Match simulation started successfully."
+}
+```
+
+**Expected Errors:**
+```json
+{
+  "status": "400 Bad Request",
+  "message": "Match has already started or is finished."
+}
+```
+
+```json
+{
+  "status": "403 Frobidden",
+  "message": "User does not have permission to start this match."
+}
+```
+
+```json
+{
+  "status": "404 Not Found",
+  "message": "Match not found."
+}
+```
+
+#### 3.5.25 Get Match
 **GET** `/leagues/{league_id}/matches/{match_id}`
 
 **Response:**
