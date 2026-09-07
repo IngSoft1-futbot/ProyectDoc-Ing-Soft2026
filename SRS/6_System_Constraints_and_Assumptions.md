@@ -14,11 +14,11 @@
 
 ### 1.3 Operational Constraints
 - **Match Simulation:** Matches consist of 4 quarters.
-- **Substitutions:** Substitutions can only be requested during breaks (between quarters or during cooling breaks) and must be completed before the next quarter starts.
+- **Substitutions:** Substitutions can only be requested during breaks (between quarters or during cooling breaks) and must be completed before the next quarter starts, substitutions are not accumulative, meaning only one substitution per break and if a user does not use that substitutions, then they must wait until next quarter to perform one.
 - **Resource Usage:** Match simulations and real-time updates must be optimized to prevent excessive server resource consumption.
 
 ### 1.4 Business Rules
-- **Team Composition & League Eligibility:** A team must have a minimum of 6 players to be eligible for league participation. While a team may fall below 6 players due to player deletion, they are prohibited from joining or participating in any league until the roster is restored to at least 6 players.
+- **Team Composition & League Eligibility:** A team must have a minimum of 6 players to be eligible for league participation, 3 main players and 3 replacement players. While a team may fall below 6 players due to player deletion, they are prohibited from joining or participating in any league until the roster is restored to at least 6 players.
 
 ## 2. Assumptions
 
