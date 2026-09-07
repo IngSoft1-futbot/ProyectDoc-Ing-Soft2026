@@ -16,11 +16,11 @@
 
 - Desarrollo Del Partido: Los partidos se desarrollan 3v3, en los cuales no hay arbitro, faltas, fueras de juego, laterales ni corners, ya que en los bordes del campo la pelota rebota. Las disputas de pelota por jugadores a misma distancia se resuelven comparando sus respectivos atributos delimitados en sus PACSS. Ademas los partidos estan divididos en 4 tiempos con 3 pausas (2 cooling breaks y 1 entretiempo), durante cada pausa el usuario tiene permitido la sustitucion de un jugador, la cual no es acumulativa, es decir, si no realiza la sustitucion ese cambio se pierde. Ademas el usuario podra ver ademas de sus jugadores como sus comportamientos, los comportamientos del rival.
 
-- Sistema De Ligas y Amistosos: El usuario dispondra de la opcion de creacion de ligas tanto publicas en la cual cualquier usuario con su club podra unirse respetando las condiciones de ingreso de la misma, como tambien privadas que estas para ingresar debera el usuario de disponer una contraseña. En el desarrollo de la liga habran fixtures que decidiran que clubes se enfrentan y en la liga habra un sistema de puntos que decidiran que club es el ganador de la liga y en caso de empate de puntos el ganador se decide a traves de goles a favor y en contra. Otro detalle es que el usuario ya sea en el transcurso de la liga o no, este puede jugar partidos amistosos con otros Usuarios a traves de una invitacion y en caso de ser aceptada el partido iniciara. 
+- Sistema De Ligas y Amistosos: El usuario dispondra de la opcion de creacion de ligas tanto publicas en la cual cualquier usuario con su club podra unirse respetando las condiciones de ingreso de la misma, como tambien privadas que estas para ingresar debera el usuario de disponer una contraseña. El minimo requisito para crear una liga es poseer al menos 3 equipos, y el requisito minimo para ingresar a una liga creada por otro jugador, es tener un equipo con 3 jugadores titulares y 3 jugadores suplentes. En el desarrollo de la liga habran fixtures que decidiran que clubes se enfrentan y en la liga habra un sistema de puntos que decidiran que club es el ganador de la liga y en caso de empate de puntos el ganador se decide a traves de goles a favor y en contra. Otro detalle es que el usuario ya sea en el transcurso de la liga o no, este puede jugar partidos amistosos con otros Usuarios a traves de una invitacion y en caso de ser aceptada el partido iniciara. 
 
 - Visualizacion de partidos: Ademas la plataforma dispondra de la opcion de que los partidos que se jueguen en ese momento puedan ser visualizados por los usuarios que son enfrentados pero ademas podra tener espectadores que seran los demas usuarios.
 
-- Ranking Global: Tabla general de posiciones que clasifica y ordena a todos los usuarios de la plataforma en función de los puntos sumados a lo largo de todas las ligas disputadas En caso de empate a definir ?????) 
+- Ranking Global: Tabla general de posiciones que clasifica y ordena a todos los usuarios de la plataforma en función de los puntos sumados a lo largo de todas las ligas disputadas, en caso de empate, el sistema priorizará los partidos ganados y goles.
 
 ## Requisitos Funcionales: 
  
@@ -33,7 +33,7 @@
 - El sistema debe recibir y almacenar el codigo Python de los comportamientos asociado al usuario creador.
 - El sistema debe validar tanto la sintaxis como las instrucciones del codigo python desarrollado por el usuario antes de incorporar el comportamiento
 - El sistema debe rechazar cualquier comportamiento que el usuario intente agregar si el codigo python tiene errores de sintaxis o intenta modificar o intervenir el funcionamiento de la plataforma.
-- El sistema debe bloquear cualquier intento de modificacion, creacion o eliminacion de codigo de comportamiento mientras el usuario tenga un partido en curso.
+- El sistema debe bloquear cualquier intento de modificacion o eliminacion de codigo de comportamiento mientras el usuario tenga un partido en curso.
 - El sistema debe verificar que la contraseña ingresada coincida de manera segura para autorizar el ingreso de un club a una liga privada.
 - El sistema debe validar que un club cuente con exactamente 6 jugadores creados antes de permitir su inscripcion a una liga.
 - El sistema debe rechazar la inscripcion de un club a una liga si la cantidad de equipos inscriptos ya alcanzo el maximo definido al crear la liga.
