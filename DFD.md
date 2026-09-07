@@ -175,7 +175,7 @@ usecase "2.1.2\nSave Player &\nAssign Team" as P2
 
 ' Step 1: Input & PACSS Validation
 Us --> P1 : Player Data\n(Name, PACSS Attributes)
-P1 --> Us : Error: Invalid PACSS Allocation\n(Total Must Equal 10 Points)
+P1 --> Us : Error: Invalid PACSS Allocation\n(Total Must Equal 300 Points)
 P1 --> Us : Error: Attribute Below Minimum\n(Min 1 Point Per Attribute)
 P1 --> P2 : Validated Player Profile
 
@@ -205,7 +205,7 @@ P1 --> Us : Error: Cannot Edit Player\n(Currently In Active Match)
 P1 --> P2 : Approved Update\n Payload
 
 ' Step 2: PACSS Validation
-P2 --> Us : Error: Invalid PACSS Allocation\n(Total Must Equal\n 10 Points)
+P2 --> Us : Error: Invalid PACSS Allocation\n(Total Must Equal\n 300 Points)
 P2 --> P3 : Validated Updated\n Attributes
 
 ' Step 3: Database Persistence & Output
@@ -256,7 +256,7 @@ usecase "3.1.3\nSave Team &\nAssign Players" as P3
 
 ' Step 1: Input & Size Validation
 Us --> P1 : Team Creation Data\n(Team Name, 6+ Players)
-P1 --> Us : Error: Insufficient Players\n(Minimum 6 Required)
+P1 --> Us : Error: Insufficient Players\n(Minimum 3+3 Required)
 P1 --> P2 : Formatted Team Data\n& Valid Roster Count
 
 ' Step 2: Database Assignment Check
@@ -303,25 +303,10 @@ P2 --> Us : Roster Update\n Success Response
 
 ```plantuml
 @startuml
-title DFD Level 2 - Process 3.3 Modify Team
+title DFD Level 2 - Process 3.3 Delete Team
 
 rectangle "User" as Us
 database "D2: Teams & Players DB" as DB2
-
-usecase "3.3.1\nValidate Name\nUniqueness" as P1
-usecase "3.3.2\nUpdate Team\nMetadata" as P3
-
-' Step 1: Name Uniqueness Check
-Us --> P1 : Team Modification Data\n(Team, New Name)
-P1 --> DB2 : Query Existing Team Names
-DB2 --> P1 : Name Availability Response
-P1 --> Us : Error: Duplicate\n Team Name
-
-P1 --> P3 : Fully Validated Team
-
-' Step 3: Database Persistence
-P3 --> DB2 : Update Team Name
-P3 --> Us : Team Modification\n Success Response
 
 @enduml
 ```
