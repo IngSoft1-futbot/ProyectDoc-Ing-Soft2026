@@ -143,26 +143,26 @@ A user creates a new player with customizable PACSS attributes.
 
 **Inputs:**
 1. Player name
-2. PACSS attributes (Power, Speed, Dexterity, Control, Strength)
+2. PACSS attributes (Power, Speed, Agility, Control, Strength)
 3. Team assignment (optional at creation)
 
 **Successful Flow:**
 1. User accesses player creation interface
 2. System displays form for player creation
 3. User enters player name and PACSS values
-4. System validates that exactly 10 points are allocated across all attributes
-5. System validates minimum value of 1 point per attribute
+4. System validates that exactly 300 points are allocated across all attributes
+5. System validates minimum value of 20 points per attribute
 6. System creates player record in database
 7. System assigns player to team if specified
 8. System displays confirmation message
 
 **Exceptional Scenarios:**
 - **Exception 1 - Invalid PACSS Allocation:**
-  - Trigger: Total points not equal to 10 (Step 4)
+  - Trigger: Total points not equal to 300 (Step 4)
   - Flow: System displays error indicating incorrect point allocation
 
 - **Exception 2 - Attribute Below Minimum:**
-  - Trigger: Any attribute below 1 point (Step 5)
+  - Trigger: Any attribute below 20 point (Step 5)
   - Flow: System displays error indicating minimum point requirement
 
 **Post-conditions:**
@@ -199,7 +199,7 @@ A user modifies existing player information including PACSS attributes.
 
 **Exceptional Scenarios:**
 - **Exception 1 - Invalid PACSS Allocation:**
-  - Trigger: Total points not equal to 10 (Step 4)
+  - Trigger: Total points not equal to 300 (Step 4)
   - Flow: System displays error indicating incorrect point allocation
 
 **Post-conditions:**
