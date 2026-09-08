@@ -1054,94 +1054,65 @@ Clients can send specific commands during a match.
 | `500 Internal Server Error` | Server-side error occurred. |
 
 
-## 6. API de Comportamientos
+## 6. Behaviors API
 
 ### 6.1 Overview
-Esta libreria proporciona las herramientas y la documentacion necesaria para que los usuarios puedan diseñar y programar la logica de comportamiento de sus jugadores utilizando el lenguaje Python. El sistema del juego procesara las decisiones tomadas en cada turno y ejecutara los comportamientos, resolviendo su exito y rendimiento fisico de forma automatica mediante los atributos del sistema PACSS (POWER, AGILITY, CONTROL, SPEED y STRENGTH) del jugador en cuestion.
+This library provides the necessary tools and documentation for users to design and program their players' behavior logic using the Python programming language. The game system will process the decisions made in each turn and execute the behaviors, automatically resolving their success and physical performance through the player's PACSS system attributes (POWER, AGILITY, CONTROL, SPEED, and STRENGTH).
 
-### 6.2 Punto de Entrada: El metodo jugar_turno
-Para que el sistema del simulador pueda comunicarse con el codigo del usuario, es obligatorio que el script de Python incluya una funcion principal llamada `jugar_turno(estado_partida)`. Este metodo actua como el nucleo de acciones de los jugadores y es el unico lugar donde se podra desarrollar la logica de su comportamiento.
+### 6.2 Entry Point: The `jugar_turno` Method
+For the simulator system to communicate with the user's code, it is mandatory that the Python script includes a main function named `jugar_turno(estado_partida)`. This method acts as the core of the players' actions and is the only place where their behavior logic can be developed.
 
-**Frecuencia De Ejecucion:**
-El motor del juego no llama a esta funcion una sola vez. La invoca repetidamente varias veces por segundo durante cada "tick" o ciclo de actualizacion del partido para evaluar constantemente la situacion.
+*   **Execution Frequency:** The game engine does not call this function just once. It invokes it repeatedly several times per second during each "tick" or match update cycle to constantly evaluate the situation.
+*   **Obtaining the Match State:** The method obtains environmental information exclusively through parameters. The server engine injects the `estado_partida` object as an argument when invoking `jugar_turno`. No external primitive calls or network queries are required from the user to receive this update, as data delivery is a system-managed process.
+*   **The Main Function Parameter:** Every time the server calls the `jugar_turno` function, it injects an object named `estado_partida`. This object acts as the player's senses and contains read-only information about the current instant of the match, such as:
+    *   **Ball data:** Its current spatial coordinates and, if someone possesses it at that moment, the ID of that player.
+    *   **Player data:** Precise coordinates of both teammates and rivals, which will be used to calculate distances and make behavioral decisions.
+    *   **Match data:** General information about the environment, such as the remaining time and the current score.
+*   **Continuity Rule:** Players will only change their current behavior if the script explicitly executes a new primitive during the turn. In the event that the behavior finishes its action and the system receives no primitive change, it will not stop the bot, but rather maintain it continuously performing the behavior it was assigned in the previous tick.
 
-**Obtencion del Estado de la Partida:**
-El metodo obtiene la informacion del entorno exclusivamente a traves de parametros. El motor del servidor inyecta el objeto `estado_partida` como argumento al momento de invocar `jugar_turno`. No se requieren llamadas a primitivas externas ni consultas de red por parte del usuario para recibir esta actualizacion, ya que la entrega de los datos es un proceso gestionado por el sistema.
+### 6.3 PRIMITIVES CATALOG
 
-**El Parametro De La Funcion Principal:**
-Cada vez que el servidor llama a la funcion `jugar_turno`, inyecta un objeto llamado `estado_partida`. Este objeto actua como los sentidos del jugador y contiene informacion de solo lectura sobre el instante actual del partido, como:
-* **Datos de la pelota:** Sus coordenadas espaciales actuales y, en caso de que alguien la posea en ese instante, el ID de dicho jugador.
-* **Datos de los jugadores:** Coordenadas precisas tanto de compañeros como de rivales, las cuales seran utilizadas para calcular distancias y tomar decisiones de comportamiento.
-* **Datos del partido:** Informacion general sobre el entorno, como el tiempo restante y el marcador actual.
-
-**Regla De Continuidad:**
-Los jugadores solamente cambiaran su comportamiento actual si el script ejecuta explicitamente una nueva primitiva durante el turno. En caso de que el comportamiento finalice su accion y el sistema no reciba ningun cambio de primitiva, el mismo no detendra al bot, sino que lo mantendra realizando de forma ininterrumpida el comportamiento que ya tenia asignado en el tick anterior.
-
-### 6.3 CATALOGO DE PRIMITIVAS
-
-#### 6.3.1 moverse_hacia
+#### 6.3.1 `moverse_hacia`
 **METHOD** `moverse_hacia(x: float, y: float, porcentaje_velocidad: int) -> None`
 
-**Description:**
-Ordena al jugador trasladarse hacia las coordenadas (x, y) otorgadas como parametro, utilizando un porcentaje de velocidad coherente a su atributo speed.
+*   **Description:** Orders the player to move towards the (x, y) coordinates provided as parameters, using a speed percentage consistent with their speed attribute.
+*   **State Impact:** Progressively updates the player's own coordinates in subsequent ticks.
+*   **Evaluated Attributes:**
+    *   **SPEED:** Determines the player's maximum movement speed and acceleration capacity during the trajectory.
 
-**Impacto en el Estado:**
-Actualiza progresivamente las coordenadas propias del jugador en los siguientes ticks.
-
-**Atributos evaluados:**
-* **SPEED:** Determina la velocidad maxima de desplazamiento y la capacidad de aceleracion del jugador durante el trayecto.
-
-#### 6.3.2 mantener_posicion
+#### 6.3.2 `mantener_posicion`
 **METHOD** `mantener_posicion(x: float, y: float, radio: float) -> None`
 
-**Description:**
-Conserva al jugador en una zona del campo especificada a traves del radio para establecer futuras estrategias defensivas o esperar un pase de un compañero. 
+*   **Description:** Keeps the player in a specified zone of the field using the radius to establish future defensive strategies or wait for a teammate's pass.
+*   **State Impact:** Sets the input (x, y) coordinates as the central reference point and delimits the area using the specified radius. The bot will move to that zone and remain in motion within that limit until the ball or a rival invades it.
+*   **Evaluated Attributes:**
+    *   **SPEED:** Used by the system to react to invasions by rivals or the ball within its established radius.
 
-**Impacto en el Estado:**
-Establece las coordenadas (x, y) ingresadas como el punto central de referencia y delimita el area utilizando el radio especificado. El bot se trasladara a esa zona y se mantendra en movimiento dentro de ese limite hasta que la pelota o un rival lo invadan.
-
-**Atributos evaluados:**
-* **SPEED:** Utilizado por el sistema para reaccionar ante invasiones de rivales o de la pelota dentro de su radio establecido.
-
-#### 6.3.3 marcar_pelota
+#### 6.3.3 `marcar_pelota`
 **METHOD** `marcar_pelota() -> None`
 
-**Description:**
-Ordena al jugador un intento de quite de la pelota hacia el jugador rival que posee el balon.
+*   **Description:** Orders the player to attempt to tackle the ball from the rival player who currently possesses it.
+*   **State Impact:** If the action is successful, the rival player will lose possession of the ball.
+*   **Evaluated Attributes:**
+    *   **CONTROL:** The engine first validates if the player is close enough to the rival according to the reach radius dictated by this attribute.
+    *   **STRENGTH:** The success of the tackle is calculated through a direct dispute of this value against the opponent's strength.
 
-**Impacto en el Estado:**
-Si la accion es exitosa, el jugador rival perdera la posesion de la pelota
-
-**Atributos evaluados:**
-* **CONTROL:** El motor valida primero si el jugador esta lo suficientemente cerca del rival segun el radio de alcance dictado por este atributo.
-* **STRENGTH:** El exito del robo se calcula mediante una disputa directa de este valor contra la fuerza del oponente.
-
-#### 6.3.4 patear_pelota
+#### 6.3.4 `patear_pelota`
 **METHOD** `patear_pelota(x: float, y: float, porcentaje_fuerza: int) -> None`
 
-**Description:**
-El jugador ejecuta un golpe sobre la pelota con la direccion de las coordenadas (x, y) utilizando un porcentaje de la fuerza maxima del jugador.
+*   **Description:** The player strikes the ball towards the (x, y) coordinates using a percentage of their maximum strength.
+*   **State Impact:** Propels the ball with a specific speed and direction, and applies a temporary restriction on the player's ability to strike again.
+*   **Evaluated Attributes:**
+    *   **CONTROL:** The system first verifies if the distance between the player and the ball is less than or equal to the reach radius dictated by this attribute.
+    *   **POWER:** Scales the input strength percentage to calculate the ball's exit speed.
+    *   **AGILITY:** Determines the amount of penalty ticks the player will suffer before being able to shoot again.
 
-**Impacto en el Estado:**
-Impulsa la pelota con una velocidad y direccion determinadas, y aplica una restriccion temporal a la capacidad del jugador para volver a golpear.
-
-**Atributos evaluados:**
-* **CONTROL:** El sistema verifica primero si la distancia entre el jugador y la pelota es menor o igual al radio de alcance dictado por este atributo.
-* **POWER:** Escala el porcentaje de fuerza ingresado para calcular la velocidad de salida del balon.
-* **AGILITY:** Determina la cantidad de ticks de penalizacion que sufrira el jugador antes de poder efectuar un nuevo disparo.
-
-#### 6.3.5 pasar_pelota
+#### 6.3.5 `pasar_pelota`
 **METHOD** `pasar_pelota(id_jugador: int, porcentaje_fuerza: int) -> None`
 
-**Description:**
-Calcula las coordenadas actuales del compañero indicado por su ID y ejecuta un envio del balon dirigido hacia su posicion.
-
-**Impacto en el Estado:**
-Impulsa la pelota con una velocidad y direccion determinadas hacia la ubicacion del receptor al momento del pase y aplica una restriccion temporal a la capacidad del jugador para volver a golpear.
-
-**Atributos evaluados:**
-* **CONTROL:** Verifica si la distancia entre el jugador y la pelota es valida para iniciar el pase.
-* **POWER:** Escala el porcentaje de fuerza ingresado para calcular la velocidad de salida del pase.
-* **AGILITY:** Determina la cantidad de ticks de penalizacion que sufrira el jugador antes de poder efectuar un nuevo disparo.
-
-
+*   **Description:** Calculates the current coordinates of the teammate indicated by their ID and executes a pass directed towards their position.
+*   **State Impact:** Propels the ball with a specific speed and direction towards the receiver's location at the time of the pass and applies a temporary restriction on the player's ability to strike again.
+*   **Evaluated Attributes:**
+    *   **CONTROL:** Verifies if the distance between the player and the ball is valid to initiate the pass.
+    *   **POWER:** Scales the input strength percentage to calculate the exit speed of the pass.
+    *   **AGILITY:** Determines the amount of penalty ticks the player will suffer before being able to shoot again.
