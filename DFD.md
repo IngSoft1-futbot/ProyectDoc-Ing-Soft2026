@@ -60,15 +60,18 @@ rectangle "User" as User
 usecase "1.1\nUser Registration" as UC1
 usecase "1.2\nUser Login" as UC2
 usecase "1.3\nProfile Edition" as UC3
+usecase "1.4\nUser Logout" as UC4
 
 database "D1: Users DB" as DB
 
 User --> UC1 : Unregistered User Data\n(Username, Email, Password...)
 User --> UC2 : User Login Credentials\n(Email, Password)
 User --> UC3 : New User Credentials\n (Optional Email, Optional Password,...)
-UC1 --> DB
-UC2 --> DB
-UC3 --> DB
+User --> UC4 : Log Out Request
+UC1 --> DB : New User Record
+UC2 --> DB : Updated Login timestamp
+UC3 --> DB : Updated User records
+UC4 --> DB : Token Session Invalidation Request
 ```
 
 ```plantuml
@@ -86,12 +89,12 @@ database "D1: Users DB" as DB
 
 ' Execution Pipeline
 EntityUser --> P1_1 : Raw Registration Form Data
-P1_1 --> EntityUser : Formatting Errors (Invalid Email/Password format)
+P1_1 --> EntityUser : Formatting Errors \n(Invalid Email/Password format)
 
 P1_1 --> P1_2 : Formatted Inputs
 P1_2 --> DB : Query Email Record
 DB --> P1_2 : Existing Account Data
-P1_2 --> EntityUser : Error: Email Already Taken
+P1_2 --> EntityUser : Error: Email \nAlready Taken
 
 P1_2 --> P1_3 : Unique & Validated Data
 P1_3 --> DB : Write Encrypted User Record
