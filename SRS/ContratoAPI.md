@@ -485,7 +485,7 @@ https://api.futbot.com/v1/
 ```json
 {
   "status": "409 Conflict",
-  "message": "Cannot delete team while register in an active league."
+  "message": "Cannot delete team while register in an active league or playing friendly match."
 }
 ```
 
@@ -525,6 +525,13 @@ https://api.futbot.com/v1/
 {
   "status": "400 Bad Request",
   "message": "Min teams is greater than Max teams."
+}
+```
+
+```json
+{
+    "status": "409 Conflict",
+    "message": "League name in use." 
 }
 ```
 
@@ -589,7 +596,7 @@ https://api.futbot.com/v1/
       }
     ]
   },
-  "message": "League retrieved successfully."
+  "message": "League retrieved successfully. Notification sent to teams."
 }
 ```
 
