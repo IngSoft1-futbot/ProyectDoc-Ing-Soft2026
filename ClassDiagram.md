@@ -1,11 +1,11 @@
-
+# DIAGRAMA DE CLASES
 ```mermaid
 classDiagram
     class Usuario {
         +int id
         +String nickname
         +String email
-        +String password_ruido
+        +String password
         +String avatar
 
         +registrarse()
@@ -24,6 +24,7 @@ classDiagram
         +unirseALiga()
         +editarEquipo()
         +eliminarEquipo()
+        +asignarComportamiento()
     }
     
     class Historial{
@@ -31,7 +32,7 @@ classDiagram
         +int puntosTotales
         +int partidosGanados
         +int partidosPerdidos
-        +int partidosEmpatadas
+        +int partidosEmpatados
         +List~Partido~ partidos
     }
 
@@ -45,17 +46,17 @@ classDiagram
         +int speed
         +int strength
 
-		+actualizarJugador()
-		+borrarJugador()
+        +actualizarJugador()
+        +borrarJugador()
         +validarPACSS()
     }
 
     class Comportamiento {
         +int id
-        +string nombre
+        +String nombre
         +String codigoPython
 
-        +crearcomportamiento()
+        +crearComportamiento()
         +validarSintaxis()
         +validarSeguridad()
         +editarComportamiento()
@@ -72,15 +73,23 @@ classDiagram
         +int maxEquipos
         +int duracionPartido
         +int fechaInicio
-        +List~Equipos~ inscritos
+        +List~Equipo~ inscritos
 
         +crearLiga()
         +iniciarLiga()
         +cancelarLiga()
     }
 
+    class SolicitudAmistoso {
+        +int id
+        +String estado
+        
+        +aceptar()
+        +rechazar()
+    }
+
     class TablaPosiciones {
-        +List~Equipos~ inscriptos
+        +List~Equipo~ inscritos
         +String orden
 
         +actualizar()
@@ -92,7 +101,6 @@ classDiagram
         +String orden
 
         +actualizarRanking()
-
     }
 
     class Partido {
@@ -115,12 +123,15 @@ classDiagram
 
     Usuario "1" -- "1" Equipo : posee
     Usuario "1" --> "*" Comportamiento : crea
-    Usuario "*" --> "1" Partido: Observa
+    Usuario "*" --> "1" Partido: observa
     Usuario "1" --> "*" Jugador: crea
+    
+    Usuario "1" --> "*" SolicitudAmistoso: envia/recibe
+    SolicitudAmistoso "1" --> "1" Partido: genera
 
     Equipo "1" o-- "6" Jugador : conforma
     Equipo --> Historial
-    Jugador "*" --> "1" Comportamiento : ejecuta
+    Equipo "*" --> "1" Comportamiento : asigna a jugador
 
     Liga "1" o-- "*" Equipo : inscribe
     Liga "1" *-- "1" TablaPosiciones : gestiona
@@ -130,6 +141,5 @@ classDiagram
 
     Partido --> Resultado: tendra
 
-    Usuario "*"-->"1" RankingGlobal: compuesta
-    
+    Usuario "*" --> "1" RankingGlobal: compone
 ```
