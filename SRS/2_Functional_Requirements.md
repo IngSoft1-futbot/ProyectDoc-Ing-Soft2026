@@ -634,6 +634,76 @@ The user leaves a league they have previously joined, releasing their team to be
 
 ---
 
+### 4.6 Use Case: List User Leagues
+
+**Actor:** Registered User (Logged In)
+
+**Brief Description:**
+Allows a user to consult the list of all leagues they have created or in which they are currently participating with their team.
+
+**Preconditions:**
+- The User must be logged in to the platform.
+
+**Inputs:**
+1. User ID or selection action ("My Leagues").
+
+**Successful Flow:**
+1. User navigates to the "My Leagues" section or views their profile.
+2. System queries the database for all leagues associated with the User's ID (either as creator or as a participant with their team).
+3. System retrieves and processes the records.
+4. System displays the list of leagues on the screen including basic information (League Name, League ID, Status, Number of Enrolled Teams).
+5. User can select any league from the list to view its full details.
+
+**Exceptional Scenarios:**
+- **Exception 1 - No Leagues Found:**
+  - Trigger: System detects no league records associated with the User's ID (Step 3).
+  - Flow: System displays an informative message: "You are not enrolled in any league currently" and provides shortcuts to "Create League" or "Browse Available Leagues".
+
+- **Exception 2 - Connection / Token Error:**
+  - Trigger: System fails to retrieve data from the server or user session/token expired (Step 2).
+  - Flow: System displays an error message notifying the data loading failure and prompts the user to retry or log in again.
+
+**Post-conditions:**
+1. The user views their list of active and created leagues.
+
+---
+
+### 4.7 Use Case: List Other User's Leagues
+
+**Actor:** Registered User (Logged In)
+
+**Brief Description:**
+Allows a logged-in user to view the list of public leagues in which another specific user participates or has created when viewing their public profile.
+
+**Preconditions:**
+- The requesting user must be logged in to the platform.
+- The target user (whose leagues are being consulted) must be registered in the system.
+
+**Inputs:**
+1. ID or Username of the target user.
+
+**Successful Flow:**
+1. User navigates to another user's profile or selects their name from a list/search result.
+2. User clicks on the "Leagues of [Username]" tab or section.
+3. System queries the database for public leagues where the target user is listed as creator or participant.
+4. System retrieves and processes the records.
+5. System displays the list of public leagues on the screen (League Name, Status, User Role [Creator/Participant], and Number of Teams).
+6. User can click on any displayed league to view its public details.
+
+**Exceptional Scenarios:**
+- **Exception 1 - Target User Has No Leagues:**
+  - Trigger: System detects no league records associated with the target user (Step 3).
+  - Flow: System displays an informative message: "This user does not belong to any league currently."
+
+- **Exception 2 - Target User Leagues Are Private:**
+  - Trigger: System detects that the target user's leagues have restricted/private visibility (Step 3).
+  - Flow: System displays only the league names with a "Private League" indicator, preventing access to details without the required password.
+
+**Post-conditions:**
+1. The requesting user views the public leagues associated with the searched user.
+
+---
+
 ## 5.0 Behavior Management
 
 ### 5.1 Use Case: Create Behavior
