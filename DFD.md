@@ -164,6 +164,40 @@ US3 --> Us : Profile Updated Success Response
 
 @enduml
 ```
+
+```plantuml
+@startuml
+title DFD Level 2 - Process 1.4 Log Out
+
+rectangle "User" as EntityUser
+
+usecase "1.4.1\nValidate Active\nSession" as P1
+usecase "1.4.2\nConfirm Logout\nIntent" as P2
+usecase "1.4.3\nInvalidate Session &\nTerminate Connections" as P3
+
+database "D1: Users DB" as DB
+
+' Data Flows
+EntityUser --> P1 : Logout Action\n(from any page)
+P1 --> DB : Verify Session/Token Status
+DB --> P1 : Session Status
+
+P1 --> P2 : Active Session Confirmed
+P2 --> EntityUser : Confirmation Prompt\n("Are you sure you want to log out?")
+EntityUser --> P2 : Confirm / Cancel
+
+P2 --> EntityUser : Cancel: No Changes\n(Remains Logged In)
+
+P2 --> P3 : Confirmed Logout Request
+P3 --> DB : Invalidate Session Token
+P3 --> EntityUser : Close WebSocket Connection\n(Match Updates)
+P3 --> EntityUser : Clear Client-Side Data\n(Local Storage, Session Vars)
+P3 --> EntityUser : Logout Success &\nRedirect to Login Page
+
+@enduml
+
+```
+
 ---
 # Player Management
 ```plantuml
@@ -310,10 +344,32 @@ title DFD Level 2 - Process 3.3 Delete Team
 
 rectangle "User" as Us
 database "D2: Teams & Players DB" as DB2
+database "D3: Leagues & Matches DB" as DB3
+
+usecase "3.3.1\nValidate Deletion\nEligibility" as P1
+usecase "3.3.2\nExecute Team\nDeletion" as P2
+
+' Step 1: Eligibility Check
+Us --> P1 : Delete Team Request\n(Team ID)
+P1 --> DB3 : Query Team's League\nMembership Status
+DB3 --> P1 : League Registration Data
+P1 --> DB3 : Query Team's Friendly\nMatch Status
+DB3 --> P1 : Friendly Match Status
+
+P1 --> Us : Error: Cannot Delete Team\n(Registered in League {league name})
+P1 --> Us : Error: Cannot Delete Team\n(Currently Playing Friendly Match)
+
+P1 --> P2 : Validated Deletion Request
+
+' Step 2: Execution
+P2 --> DB2 : Delete Team Record
+P2 --> Us : Team Deleted\nSuccess Response
 
 @enduml
 ```
+
 --- 
+
 # Leagues Management
 
 ```plantuml
@@ -339,4 +395,32 @@ P3 --> DB3 : Assign Selected\n Teams to League
 P3 --> Us : League Creation \nSuccess Response
 
 @enduml
+```
+
+```plantuml
+title DFD Level 2 - Process 4.2 Schedule Matches
+
+rectangle "User" as Us
+database "D3: Leagues & Matches DB" as DB3
+
+usecase "4.2.1\nValidate Teams Belong\nto League" as P1
+usecase "4.2.2\nValidate Schedule\n(No Overlap)" as P2
+usecase "4.2.3\nSave Scheduled\nMatch" as P3
+
+' Step 1: Team Membership Validation
+Us --> P1 : Match Data\n(League ID, Home Team,\nAway Team, Scheduled Date/Time)
+P1 --> DB3 : Query League's\nRegistered Teams
+DB3 --> P1 : Registered Team List
+P1 --> Us : Error: Teams Not in\nSame League
+
+' Step 2: Overlap Validation
+P1 --> P2 : Verified Team Membership
+P2 --> DB3 : Query Existing Matches\nfor Both Teams
+DB3 --> P2 : Existing Match Schedule
+P2 --> Us : Error: Schedule Conflict\n(Overlapping Match)
+
+' Step 3: Persistence
+P2 --> P3 : Validated Match Payload
+P3 --> DB3 : Write New Scheduled\nMatch Record
+P3 --> Us : Match Scheduled\nSuccess Response
 ```
