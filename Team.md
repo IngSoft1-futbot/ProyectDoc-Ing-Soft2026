@@ -1,1 +1,0 @@
-A team has a name, multiple [[Player]]s.
