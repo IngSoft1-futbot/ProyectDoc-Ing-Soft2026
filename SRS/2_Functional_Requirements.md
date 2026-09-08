@@ -1055,3 +1055,43 @@ The team owner changes the behavior script assigned to a player during an active
 2. Real-time WebSocket update sent to spectators and user.
 3. Match simulation continues with player following new behavior rules.
 
+---
+
+## 7.0 Documentation & Support
+
+### 7.1 Use Case: View Documentation (Primitives & Pre-built Behaviors)
+
+**Actor:** Guest / Registered User
+
+**Brief Description:**
+It allows any user—whether logged in or on the login screen—to access and consult the official game documentation, which includes available primitives, syntax rules, and predefined strategic behaviors.
+
+**Preconditions:**
+- The user is on the Login page or navigating the application interface.
+
+**Inputs:**
+1. "View Documentation" button click.
+
+**Successful Flow:**
+1. User clicks the "View Documentation" button from the Login page (or main page).
+2. System opens the Documentation portal / view.
+3. System fetches and displays the documentation index categorized into key sections:
+   - **Primitives:** Detailed technical list of supported functions, arguments, return values, and code snippets/examples.
+   - **Pre-built Behaviors:** Explanation and source code examples of default/template strategy scripts (e.g., `default_behavior`).
+   - **Scripting Guidelines & Security:** Rules, execution constraints, and forbidden operations within the Python environment.
+4. User selects a category or uses the search bar to locate specific primitive functions or pre-built scripts.
+5. System displays the selected section with syntax highlighting and explanations.
+
+**Exceptional Scenarios:**
+- **Exception 1 - Documentation Content Load Failure:**
+  - Trigger: System fails to load documentation content due to network issues or server error (Step 2).
+  - Flow: System displays an error message: "Unable to load documentation. Please check your connection and try again." with a "Retry" button.
+
+- **Exception 2 - No Search Results Found:**
+  - Trigger: User inputs a search term for a primitive or behavior that does not exist in the documentation index (Step 4).
+  - Flow: System displays a message: "No documentation found for '{search_term}'. Please check the spelling or browse categories."
+
+**Post-conditions:**
+1. User successfully views the game documentation without needing an active session or modifying any game state.
+
+---
