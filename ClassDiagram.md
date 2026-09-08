@@ -1,179 +1,180 @@
-# DIAGRAMA DE CLASES
+# CLASS DIAGRAM
 ```mermaid
 classDiagram
-    class Usuario {
+    class User {
         +int id
         +String nickname
         +String email
         +String password
         +String avatar
 
-        +registrarse()
-        +iniciarSesion()
-        +gestionarPerfil()
+        +register()
+        +login()
+        +manageProfile()
     }
 
-    class Equipo {
+    class Team {
         +int id
-        +String nombre
-        +List~Jugador~ jugadoresTitulares
-        +List~Jugador~ jugadoresSuplentes
+        +String name
+        +List~Player~ startingPlayers
+        +List~Player~ substitutePlayers
         
-        +crearEquipo()
-        +aptoLiga()
-        +unirseALiga()
-        +editarEquipo()
-        +eliminarEquipo()
-        +asignarComportamiento()
+        +createTeam()
+        +isLeagueReady()
+        +joinLeague()
+        +editTeam()
+        +deleteTeam()
+        +assignBehavior()
     }
     
-    class Historial{
-        +int ligasGanadas
-        +int puntosTotales
-        +int partidosGanados
-        +int partidosPerdidos
-        +int partidosEmpatados
-        +List~Partido~ partidos
+    class Record {
+        +int leaguesWon
+        +int totalPoints
+        +int matchesWon
+        +int matchesLost
+        +int matchesDrawn
+        +List~Match~ matches
     }
 
-    class Jugador {
+    class Player {
         +int id
-        +int dorsal
-        +String nombre
+        +int shirtNumber
+        +String name
         +int power
         +int agility
         +int control
         +int speed
         +int strength
 
-        +actualizarJugador()
-        +borrarJugador()
-        +validarPACSS()
+        +updatePlayer()
+        +deletePlayer()
+        +validatePACSS()
     }
 
-    class Comportamiento {
+    class Behavior {
         +int id
-        +String nombre
-        +String codigoPython
+        +String name
+        +String pythonCode
 
-        +crearComportamiento()
-        +validarSintaxis()
-        +validarSeguridad()
-        +editarComportamiento()
-        +eliminarComportamiento()
-        +comportamientoEnUso()
+        +createBehavior()
+        +validateSyntax()
+        +validateSecurity()
+        +editBehavior()
+        +deleteBehavior()
+        +isBehaviorInUse()
     }
 
-    class Liga {
+    class League {
         +int id
-        +String nombre
-        +bool esPrivada
-        +String contraseña
-        +int minEquipos
-        +int maxEquipos
-        +int duracionPartido
-        +int fechaInicio
-        +List~Equipo~ inscritos
+        +String name
+        +bool isPrivate
+        +String password
+        +int minTeams
+        +int maxTeams
+        +int matchDuration
+        +int startDate
+        +List~Team~ registeredTeams
 
-        +crearLiga()
-        +iniciarLiga()
-        +cancelarLiga()
+        +createLeague()
+        +startLeague()
+        +cancelLeague()
     }
 
-    class SolicitudAmistoso {
+    class FriendlyMatchRequest {
         +int id
-        +String estado
+        +String status
         
-        +aceptar()
-        +rechazar()
+        +accept()
+        +reject()
     }
 
-    class TablaPosiciones {
-        +List~Equipo~ inscritos
-        +String orden
+    class StandingsTable {
+        +List~Team~ registeredTeams
+        +String order
 
-        +actualizar()
-        +resetear()
+        +update()
+        +reset()
     }
 
-    class RankingGlobal {
-        +List~Usuario~ usuarios
-        +String orden
+    class GlobalRanking {
+        +List~User~ users
+        +String order
 
-        +actualizarRanking()
+        +updateRanking()
     }
 
-    class Partido {
+    class Match {
         +int id
-        +bool enCurso 
-        +Resultado resultadoPart
+        +bool inProgress 
+        +MatchResult matchResult
 
-        +iniciarPartido()
-        +procesarSustitucion()
-        +finalizarPartido()
+        +startMatch()
+        +processSubstitution()
+        +endMatch()
     }
 
-    class Resultado {
-        +int golesEquipo1
-        +int golesEquipo2
+    class MatchResult {
+        +int team1Goals
+        +int team2Goals
 
-        +quienGano()
-        +esEmpate()
+        +getWinner()
+        +isDraw()
     }
 
-    Usuario "1" -- "1" Equipo : posee
-    Usuario "1" --> "*" Comportamiento : crea
-    Usuario "*" --> "1" Partido: observa
-    Usuario "1" --> "*" Jugador: crea
+    User "1" -- "1" Team : owns
+    User "1" --> "*" Behavior : creates
+    User "*" --> "1" Match: observes
+    User "1" --> "*" Player: creates
     
-    Usuario "1" --> "*" SolicitudAmistoso: envia/recibe
-    SolicitudAmistoso "1" --> "1" Partido: genera
+    User "1" --> "*" FriendlyMatchRequest: sends/receives
+    FriendlyMatchRequest "1" --> "1" Match: generates
 
-    Equipo "1" o-- "6" Jugador : conforma
-    Equipo --> Historial
-    Equipo "*" --> "1" Comportamiento : asigna a jugador
+    Team "1" o-- "6" Player : consists of
+    Team --> Record
+    Team "*" --> "1" Behavior : assigns to player
 
-    Liga "1" o-- "*" Equipo : inscribe
-    Liga "1" *-- "1" TablaPosiciones : gestiona
-    Liga "1" *-- "*" Partido : programa
+    League "1" o-- "*" Team : registers
+    League "1" *-- "1" StandingsTable : manages
+    League "1" *-- "*" Match : schedules
 
-    Partido "*" --> "2" Equipo : disputan
+    Match "*" --> "2" Team : compete
 
-    Partido --> Resultado: tendra
+    Match --> MatchResult: has
 
-    Usuario "*" --> "1" RankingGlobal: compone
+    User "*" --> "1" GlobalRanking: composes
 ```
-# Diccionario de clases
 
-### 1. Entidades Principales
+# Data Dictionary
 
-| Entidad | Campo | Tipo de Dato | Descripción |
+### 1. Core Entities
+
+| Entity | Field | Data Type | Description |
 | :--- | :--- | :--- | :--- |
-| **Usuario** | `user_id` | Integer | Identificador único autogenerado. |
-| **Usuario** | `username` , `email` , `password` | String | Credenciales de acceso únicas. |
-| **Usuario** | `created_at` | Datetime | Fecha y hora de registro. |
-| **Jugador** | `player_id` , `team_id` , `shirt_numb` | Integer | IDs de relación y dorsal. |
-| **Jugador** | `pacss_attributes` | Object | Valores numéricos enteros de *power*, *agility*, *control*, *speed* y *strength*. |
-| **Equipo** | `jugadores_titulares` / `suplentes` | Array | Lista de objetos vinculando `player_id` y `behavior_id`. |
+| **User** | `user_id` | Integer | Unique auto-generated identifier. |
+| **User** | `username`, `email`, `password` | String | Unique access credentials. |
+| **User** | `created_at` | Datetime | Date and time of registration. |
+| **Player** | `player_id`, `team_id`, `shirt_numb` | Integer | Relational IDs and shirt number. |
+| **Player** | `pacss_attributes` | Object | Integer numerical values for *power*, *agility*, *control*, *speed*, and *strength*. |
+| **Team** | `starting_players` / `substitutes` | Array | List of objects linking `player_id` and `behavior_id`. |
 
 ---
 
-### 2. Entidades de Competición
+### 2. Competition Entities
 
-| Entidad | Campo | Tipo de Dato | Descripción |
+| Entity | Field | Data Type | Description |
 | :--- | :--- | :--- | :--- |
-| **Liga** | `is_private` | Boolean | Define si requiere contraseña de acceso. |
-| **Liga** | `min_teams` , `max_teams` , `duration` | Integer | Reglas numéricas y cupos. |
-| **Partido** | `home_team_id` , `away_team_id` | Integer | Equipos contrincantes. |
-| **Partido** | `scheduled_at` | Datetime | Fecha programada para el inicio automático. |
-| **Amistoso** | `status` | String | Estado de la solicitud (ej: `"pedniente"`, `"aceptada"`, `"rechazada"`). |
+| **League** | `is_private` | Boolean | Defines if a password is required for access. |
+| **League** | `min_teams`, `max_teams`, `duration` | Integer | Numerical rules and capacity. |
+| **Match** | `home_team_id`, `away_team_id` | Integer | Opposing teams. |
+| **Match** | `scheduled_at` | Datetime | Scheduled date for automatic start. |
+| **Friendly Match** | `status` | String | Status of the request (e.g., `"pending"`, `"accepted"`, `"rejected"`). |
 
 ---
 
-### 3. Entidades de Comportamiento
+### 3. Behavior Entities
 
-| Entidad | Campo | Tipo de Dato | Descripción |
+| Entity | Field | Data Type | Description |
 | :--- | :--- | :--- | :--- |
-| **Behavior** | `behavior_id` | Integer | Identificador de la táctica. |
-| **Behavior** | `name` | String | Nombre descriptivo asignado por el usuario. |
-| **Behavior** | `code` | String | Bloque de texto que almacena el script en Python. |
+| **Behavior** | `behavior_id` | Integer | Tactic identifier. |
+| **Behavior** | `name` | String | Descriptive name assigned by the user. |
+| **Behavior** | `code` | String | Text block storing the Python script. |
