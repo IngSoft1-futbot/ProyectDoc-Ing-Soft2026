@@ -581,14 +581,14 @@ The user joins a private league through the main menu by entering the league nam
 8. System **grays out** unavailable teams:
    - Teams already participating in other leagues
    - Teams with fewer than 6 players
-10. User selects an available team to join the league.
-11. After selecting a team, system displays the players of that team in a list.
-12. Next to each player, a drop-down menu lists all available behaviors (including `default_behavior` as an option).
-13. The user assigns desired behaviors to players (behaviors may be assigned to multiple players; same behavior can be selected for multiple players).
-14. User clicks the final "Join" button.
-15. System validates that the league has not reached maximum participant teams limit.
-16. System registers team in private league database with assigned behaviors.
-17. System redirects user to the league page/dashboard.
+9. User selects an available team to join the league.
+10. After selecting a team, system displays the players of that team in a list.
+11. Next to each player, a drop-down menu lists all available behaviors (including `default_behavior` as an option).
+12. The user assigns desired behaviors to players (behaviors may be assigned to multiple players; same behavior can be selected for multiple players).
+13. User clicks the final "Join" button.
+14. System validates that the league has not reached maximum participant teams limit.
+15. System registers team in private league database with assigned behaviors.
+16. System redirects user to the league page/dashboard.
 
 **Exceptional Scenarios:**
 - **Exception 1 - Invalid League Name:**
@@ -750,12 +750,11 @@ A user creates a new behavior script for player AI actions during matches.
 **Inputs:**
 1. Behavior name
 2. Python script content
-3. Description of behavior purpose
 
 **Successful Flow:**
 1. User accesses behavior creation interface
 2. System displays form for behavior creation
-3. User enters behavior details and script
+3. User enters behavior name and script
 4. System validates Python syntax
 5. System saves behavior to database
 6. System displays confirmation message
@@ -765,9 +764,6 @@ A user creates a new behavior script for player AI actions during matches.
   - Trigger: Script fails Python syntax validation (Step 4)
   - Flow: System displays syntax error and prompts user to correct
 
-- **Exception 2 - Security Violation:**
-  - Trigger: Script contains restricted operations (Step 4)
-  - Flow: System displays security error and rejects script
 
 **Post-conditions:**
 1. New behavior record is created in database
@@ -872,7 +868,6 @@ A user removes a behavior script from the system. Custom behaviors can be delete
 The system executes a scheduled match with AI-driven player behaviors.
 
 **Preconditions:**
-- User is logged in
 - Match is scheduled and active
 - Teams have players assigned (via team creation or league join)
 - Each player has an active behavior assignment in the database

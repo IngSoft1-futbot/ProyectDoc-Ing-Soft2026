@@ -378,21 +378,31 @@ title DFD Level 2 - Process 4.1 Create League
 
 rectangle "User" as Us
 database "D3: Leagues & Matches DB" as DB3
+database "D2: Teams & Players DB" as DB2
 
-usecase "4.1.1\nValidate Formats\n& Team Count" as P1
-usecase "4.1.2\nSave League &\nAssign Teams" as P3
+usecase "4.1.1\nValidate League Name\n& Format" as P1
+usecase "4.1.2\nValidate Team Count\n(Min/Max)" as P2
+usecase "4.1.3\nSave League &\nAssign Teams" as P3
 
-' Step 1: Input & Size Validation
-Us --> P1 : League Data\n(Name, Type, \nPassword, Configs, Teams)
-P1 --> Us : Error: Invalid League Name\n(Name field is empty)
-P1 --> Us : Error: Insufficient Teams\n(Minimum 3 Required)
-P1 --> P3 : Formatted League Data\n& Valid Team Count
+' Step 1: Name Validation
+Us --> P1 : League Data\n(Name, Type, Password,\nMin/Max Teams, Duration, Start Date)
+P1 --> DB3 : Query Existing\nLeague Names
+DB3 --> P1 : Name Match Result
+P1 --> Us : Error: Invalid League Name\n(Empty or Duplicate)
 
+' Step 2: Team Count Validation
+P1 --> P2 : Formatted League Data
+P2 --> Us : Error: Insufficient Teams\n(Minimum 3 Required)
+P2 --> Us : Error: Min Teams\nGreater Than Max Teams
+P2 --> P3 : Validated League Payload\n& Team Count
 
-' Step 3: Database Persistence
+' Step 3: Persistence
 P3 --> DB3 : Write New League Record\n(Configs, Rules, Type)
-P3 --> DB3 : Assign Selected\n Teams to League
-P3 --> Us : League Creation \nSuccess Response
+P3 --> DB2 : Verify Selected Teams\nExist / Owned by User
+DB2 --> P3 : Team Verification Result
+P3 --> DB3 : Assign Selected Teams\nto League
+P3 --> Us : League Creation\nSuccess Response
+P3 --> Us : Error: Teams Do Not Exist\n or Not Owned by User
 
 @enduml
 ```
@@ -423,4 +433,182 @@ P2 --> Us : Error: Schedule Conflict\n(Overlapping Match)
 P2 --> P3 : Validated Match Payload
 P3 --> DB3 : Write New Scheduled\nMatch Record
 P3 --> Us : Match Scheduled\nSuccess Response
+```
+
+
+```plantuml
+@startuml
+title DFD Level 2 - Process 4.4 Join Private League
+
+rectangle "User" as Us
+database "D3: Leagues & Matches DB" as DB3
+database "D2: Teams & Players DB" as DB2
+database "D4: Bots & Behaviors DB" as DB4
+
+usecase "4.4.1\nLocate & Authenticate\nPrivate League" as P1
+usecase "4.4.2\nValidate Team\nEligibility" as P2
+usecase "4.4.3\nAssign Player\nBehaviors" as P3
+usecase "4.4.4\nValidate Capacity &\nRegister Team" as P4
+
+' Step 1: Locate & Password Check
+Us --> P1 : League Name & Password\n(from "Join Private League" modal)
+P1 --> DB3 : Query Private League\nby Name
+DB3 --> P1 : League Record\n& Stored Password
+P1 --> Us : Error: League Not Found
+P1 --> Us : Error: Invalid Password
+
+' Step 2: Team Selection & Validation
+P1 --> P2 : Authenticated League\nAccess Granted
+P2 --> DB2 : Query User's Teams\n& League/Roster Status
+DB2 --> P2 : Team Eligibility Data
+P2 --> Us : Team List\n(Ineligible Teams Grayed Out)
+Us --> P2 : Selected Team
+
+' Step 3: Behavior Assignment
+P2 --> P3 : Validated Team\n& Player Roster
+P3 --> DB4 : Query Available\nBehaviors (incl. default_behavior)
+DB4 --> P3 : Behavior List
+Us --> P3 : Behavior Assignments\n(Per Player)
+
+' Step 4: Final Join & Persistence
+Us --> P4 : Final "Join" Click
+P4 --> DB3 : Query Current League\nParticipant Count
+DB3 --> P4 : Capacity Status
+P4 --> Us : Error: League at\nMaximum Participant Limit
+P4 --> DB3 : Register Team in League
+P4 --> DB2 : Save Player Behavior\nAssignments
+P4 --> Us : Join Success &\nRedirect to League Dashboard
+
+@enduml
+```
+```plantuml
+@startuml
+title DFD Level 2 - Process 4.5 Leave League
+
+rectangle "User" as Us
+database "D3: Leagues & Matches DB" as DB3
+
+usecase "4.5.1\nConfirm Leave\nIntent" as P1
+usecase "4.5.2\nValidate League\nHas Not Started" as P2
+usecase "4.5.3\nRemove Team &\nRecalculate Fixtures" as P3
+usecase "4.5.4\nBroadcast Update &\nNotify User" as P4
+
+' Step 1: Confirmation
+Us --> P1 : "Leave League" Click\n(on League Dashboard)
+P1 --> Us : Confirmation Prompt\n("Team will be available immediately")
+Us --> P1 : Confirm / Cancel
+P1 --> Us : Cancel: No Changes\n(Remains in League)
+
+' Step 2: Eligibility Validation
+P1 --> P2 : Confirmed Leave Request
+P2 --> DB3 : Query League Match\n/ Start Status
+DB3 --> P2 : League Status\n(Started? Active Matches?)
+P2 --> Us : Error: Cannot Leave\n(League Already Started)
+
+' Step 3: Removal & Recalculation
+P2 --> P3 : Validated Leave Request
+P3 --> DB3 : Remove Team-League\nMapping
+P3 --> DB3 : Preserve Team's\nScore & Stats
+P3 --> DB3 : Remove Team's Remaining\nScheduled Matches
+P3 --> DB3 : Adjust League\nStandings
+
+' Step 4: Broadcast & Redirect
+P3 --> P4 : Fixtures Recalculated
+P4 --> Us : WebSocket Broadcast\n(To All League Participants)
+P4 --> Us : Leave Success &\nRedirect to Main Dashboard\n(Team Now Available)
+
+@enduml
+```
+
+```plantuml
+@startuml
+title DFD Level 2 - Process 4.6 List User Leagues
+
+rectangle "User" as Us
+database "D3: Leagues & Matches DB" as DB3
+
+usecase "4.6.1\nQuery User's\nLeagues" as P1
+usecase "4.6.2\nFormat &\nDisplay List" as P2
+
+' Step 1: Query
+Us --> P1 : Navigate to\n"My Leagues"
+P1 --> DB3 : Query Leagues Where\nUser is Creator or Team Participant
+DB3 --> P1 : League Records
+P1 --> Us : Error: Data Load Failed\n/ Session Expired
+
+' Step 2: Display
+P1 --> P2 : Retrieved League Records
+P2 --> Us : League List\n(Name, ID, Status, Enrolled Team Count)
+P2 --> Us : Empty State: "Not Enrolled\nin Any League" + Shortcuts
+
+@enduml
+```
+
+# Behavior Management
+
+```plantuml
+@startuml
+title DFD Level 2 - Process 5.1 Create Behavior
+
+rectangle "User" as Us
+database "D4: Bots & Behaviors DB" as DB4
+
+usecase "5.1.1\nValidate Python\nSyntax" as P1
+usecase "5.1.2\nSave Behavior\nRecord" as P3
+
+' Step 1: Syntax Validation
+Us --> P1 : Behavior Data\n(Name, Python Script, Description)
+P1 --> Us : Error: Invalid Python Syntax\n(Correction Prompt)
+
+' Step 2: Syntactic Validation
+P1 --> P3 : Syntactically Valid Script
+
+' Step 3: Persistence
+P3 --> DB4 : Write New Behavior Record
+P3 --> Us : Behavior Creation\nSuccess Response
+
+@enduml
+```
+
+# Match Management
+
+```plantuml
+@startuml
+title DFD Level 2 - Process 6.1 Execute Match
+
+rectangle "Scheduler\n(System Trigger)" as Sched
+database "D3: Leagues & Matches DB" as DB3
+database "D2: Teams & Players DB" as DB2
+database "D4: Bots & Behaviors DB" as DB4
+rectangle "Spectators /\nParticipants" as Spec
+
+usecase "6.1.1\nIdentify Scheduled\nMatch & Load Teams" as P1
+usecase "6.1.2\nLoad Player Behaviors\n(Fallback to Default)" as P2
+usecase "6.1.3\nRun Match Simulation\n(Live WebSocket Updates)" as P3
+usecase "6.1.4\nStore Results &\nUpdate Standings" as P4
+
+' Step 1: Identify & Load
+Sched --> P1 : Match Start Trigger\n(scheduled_at Reached)
+P1 --> DB3 : Query Scheduled Match\n& Team Compositions
+DB3 --> P1 : Match & Team Data
+
+' Step 2: Behavior Loading
+P1 --> P2 : Team Rosters
+P2 --> DB2 : Query Player Behavior\nAssignments
+DB2 --> P2 : Assigned Behaviors\n(or None)
+P2 --> DB4 : Fallback: Load\ndefault_behavior
+DB4 --> P2 : Default Behavior Script
+
+' Step 3: Simulation
+P2 --> P3 : Initialized Match\nEnvironment
+P3 --> Spec : WebSocket: match_update\n(Score, Time, Quarter)
+P3 --> Spec : WebSocket: match_event\n(Goals, Behavior/Player Switches)
+P3 --> P4 : Simulation Complete\n(or Execution Error)
+
+' Step 4: Persistence & Final Broadcast
+P4 --> DB3 : Write Match Results\n(Scores, Status = Finished)
+P4 --> DB3 : Update League Standings
+P4 --> Spec : WebSocket: Final\nResults Broadcast
+
+@enduml
 ```
