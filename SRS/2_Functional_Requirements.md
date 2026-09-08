@@ -128,6 +128,48 @@ A user views and updates their profile information, including personal details a
 
 ---
 
+### 1.4 Use Case: Log Out
+
+**Actor:** User (Logged In)
+
+**Brief Description:**
+The user terminates their current session and logs out of the system, ending authentication and releasing any active resources.
+
+**Inputs:**
+1. "Log Out" button click or logout action from any page
+2. Confirmation (optional, if auto-logout warning is shown)
+
+**Preconditions:**
+- User is currently logged in with an active session
+- User may be on any page of the application
+
+**Successful Flow:**
+1. User accesses any page in the system (dashboard, league page, profile page, etc.).
+2. User clicks the "Log Out" button (typically in header/profile menu) or performs logout action.
+3. System validates that user has an active session (Step 2).
+4. System displays confirmation message: "Are you sure you want to log out?" with "Confirm" and "Cancel" buttons.
+5. If user confirms:
+   - System invalidates current session token/cookie
+   - System clears sensitive data from client-side memory (local storage, session variables)
+   - System terminates active WebSocket connection for real-time match updates
+   - System removes user-specific resources (open league pages, team views)
+6. System displays confirmation message: "You have successfully logged out."
+7. System redirects user to the login page.
+
+**Exceptional Scenarios:**
+- **Exception 1 - Cancel Logout Confirmation:**
+  - Trigger: User clicks "Cancel" in confirmation dialog (Step 4)
+  - Flow: User remains logged in with no changes made to session or data.
+
+**Post-conditions:**
+1. User session is terminated and invalidated on server side.
+2. Active WebSocket connection closed.
+3. Client-side sensitive data cleared.
+4. User redirected to login/welcome page.
+5. User cannot access protected resources until re-authentication.
+
+---
+
 ## 2.0 Player Management
 
 ### 2.1 Use Case: Create Player
@@ -172,39 +214,26 @@ A user creates a new player with customizable PACSS attributes.
 
 ---
 
-### 2.2 Use Case: Update Player
+### 2.2 Use Case: Inspect Player
 
 **Actor:** User (Logged In)
 
 **Brief Description:**
-A user modifies existing player information including PACSS attributes.
+A user inspect player information including PACSS attributes.
 
 **Preconditions:**
 - User is logged in
 - Player exists in the database
-- Player has not been assigned to an active match
 
 **Inputs:**
-1. Player name (optional)
-2. Updated PACSS attributes
-3. Team assignment (optional)
+- None.
 
 **Successful Flow:**
 1. User accesses player management interface
 2. System displays current player information
-3. User modifies desired fields
-4. System validates PACSS allocation rules
-5. System updates database with new information
-6. System confirms changes to the user
-
-**Exceptional Scenarios:**
-- **Exception 1 - Invalid PACSS Allocation:**
-  - Trigger: Total points not equal to 300 (Step 4)
-  - Flow: System displays error indicating incorrect point allocation
 
 **Post-conditions:**
-1. Updated player record is saved in the database
-2. Player can be used with updated attributes
+1. User can see 
 
 ---
 
