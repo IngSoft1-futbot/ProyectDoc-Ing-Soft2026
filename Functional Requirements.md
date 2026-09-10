@@ -1,5 +1,3 @@
-# Functional Requirements
-
 ## 1.0 User/Profile Management
 
 ### 1.1 Use Case: Sign Up (Create New User)
@@ -1048,6 +1046,12 @@ The team owner changes the behavior script assigned to a player during an active
 1. Player behavior assignment updated in the match.
 2. Real-time WebSocket update sent to spectators and user.
 3. Match simulation continues with player following new behavior rules.
+
+---
+
+### 6.5 Use Case: Accept Friendly Match
+
+#### (Todo)
 
 ---
 

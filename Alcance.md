@@ -63,11 +63,3 @@
 - Ligas y Amistosos: El usuario puede crear una liga definiendo sus parametros (nombre, duracion de partido, cantidad de equipos), o unirse a una liga existente que cumpla con las condiciones de ingreso. De forma independiente a las ligas, el usuario tambien puede disputar partidos amistosos con los demas usuarios con los jugadores a eleccion (Siendo solo 3 titulares).
 
 - Cierre de Partido, Tabla de Posiciones y Ranking Global: Al finalizar un partido, el sistema comunica el resultado a los usuarios y espectadores involucrados. Si el partido pertenece a una liga, el sistema actualiza la tabla de posiciones correspondiente (ver Requisitos Funcionales para el cálculo de puntos) y refleja el resultado en el ranking global, que acumula el desempeño de cada usuario a traves de todas las ligas en las que participa.
-
-
-
-
-
-          
-
-        
