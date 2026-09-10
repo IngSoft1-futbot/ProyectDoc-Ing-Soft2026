@@ -16,8 +16,6 @@ classDiagram
     class Team {
         +int id
         +String name
-        +List~Player~ startingPlayers
-        +List~Player~ substitutePlayers
         
         +createTeam()
         +isLeagueReady()
@@ -33,7 +31,8 @@ classDiagram
         +int matchesWon
         +int matchesLost
         +int matchesDrawn
-        +List~Match~ matches
+
+        +updateRec()
     }
 
     class Player {
@@ -46,7 +45,6 @@ classDiagram
         +int speed
         +int strength
 
-        +updatePlayer()
         +deletePlayer()
         +validatePACSS()
     }
@@ -58,6 +56,7 @@ classDiagram
 
         +createBehavior()
         +validateSyntax()
+        +isALoop()
         +validateSecurity()
         +editBehavior()
         +deleteBehavior()
@@ -73,7 +72,6 @@ classDiagram
         +int maxTeams
         +int matchDuration
         +int startDate
-        +List~Team~ registeredTeams
 
         +createLeague()
         +startLeague()
@@ -89,7 +87,6 @@ classDiagram
     }
 
     class StandingsTable {
-        +List~Team~ registeredTeams
         +String order
 
         +update()
@@ -97,7 +94,7 @@ classDiagram
     }
 
     class GlobalRanking {
-        +List~User~ users
+
         +String order
 
         +updateRanking()
@@ -129,8 +126,9 @@ classDiagram
     User "1" --> "*" FriendlyMatchRequest: sends/receives
     FriendlyMatchRequest "1" --> "1" Match: generates
 
-    Team "1" o-- "6" Player : consists of
-    Team --> Record
+    Team "1" o-- "3" Player : compose titular's players
+    Team "1" o-- "3" Player : compose suplents's players
+    Team "1"-->"1" Record
     Team "*" --> "1" Behavior : assigns to player
 
     League "1" o-- "*" Team : registers
@@ -139,9 +137,12 @@ classDiagram
 
     Match "*" --> "2" Team : compete
 
-    Match --> MatchResult: has
+    Match "1"-->"1" MatchResult: has
 
     User "*" --> "1" GlobalRanking: composes
+
+    MatchResult "*" --> "1" Record
+    StandingsTable "1"-->"*" Team: compose
 ```
 
 # Data Dictionary
