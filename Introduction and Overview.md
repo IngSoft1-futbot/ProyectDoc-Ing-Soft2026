@@ -4,7 +4,7 @@
 ### 1. Introduction and Overview
 
 #### 1.1 Purpose
-This Software Requirements Specification (SRS) defines the functional and non-functional requirements for Futbot, a football game management system. The system enables users to create and manage player profiles, organize teams, establish leagues, and simulate football matches with AI-driven behaviors.
+Futbot is a multiplayer web game, where the users assume the technical director role and compete in matches with teams made of 3 main players and 3 replacement players. The user can assign behaviors for the selected players for the match duration, ... (WIP)
 
 #### 1.2 Project Scope
 Futbot is a software application designed as an educational project for a Software Engineering course. It serves as a real-world example of a professional working environment and provides practical experience in software development methodologies.
@@ -130,7 +130,7 @@ The system is organized into four core functional areas based on DFD Level 1 pro
 - Teams cannot participate in multiple leagues simultaneously
 - Players cannot be assigned to multiple teams simultaneously
 - Behaviors cannot be modified if actively assigned to players (must be unassigned first)
-- PACSS point allocation is fixed at 10 points total per player
+- PACSS point allocation is fixed at 300 points total per player
 
 **Assumptions:**
 - Users will have stable internet connectivity

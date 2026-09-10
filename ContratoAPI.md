@@ -1023,19 +1023,19 @@ To enable live updates during matches, the system supports WebSocket connections
 ### 4.2 Server-to-Client Messages
 The server broadcasts events to all connected clients (spectators/coaches) during a match.
 
-| Event Type | Description | Data Example |
-|-------------|-------------|--------------|
-| `match_update` | General match state update (score, time, quarter) | ```json {"type": "match_update", "data": {"score": "1-0", "time": "15:00", "quarter": 1}}``` |
-| `match_event` | A specific event occurred (goal, behavior switches, player switches) | ```json {"type": "match_event", "data": {"event": "goal", "player": "Player A", "minute": 12}}``` |
-| `substitution_event` | A substitution was made | ```json {"type": "substitution_event", "data": {"player_out": "Player X", "player_in": "Player Y"}}``` |
+| Event Type           | Description                                                          | Data Example                                                                                           |
+| -------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `match_update`       | General match state update (score, time, quarter)                    | ```json {"type": "match_update", "data": {"score": "1-0", "time": "15:00", "quarter": 1}}```           |
+| `match_event`        | A specific event occurred (goal, behavior switches, player switches) | ```json {"type": "match_event", "data": {"event": "goal", "player": "Player A", "minute": 12}}```      |
+| `substitution_event` | A substitution was made                                              | ```json {"type": "substitution_event", "data": {"player_out": "Player X", "player_in": "Player Y"}}``` |
 
 
 ### 4.3 Client-to-Server Messages
 Clients can send specific commands during a match.
 
-| Event Type | Description | Data Example |
-|-------------|-------------|--------------|
-| `substitution_request` | Request to perform a substitution | ```json {"type": "substitution_request", "player_out_id": 1, "player_in_id": 2}``` |
+| Event Type                | Description                                                        | Data Example                                                                                    |
+| ------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `substitution_request`    | Request to perform a substitution                                  | ```json {"type": "substitution_request", "player_out_id": 1, "player_in_id": 2}```              |
 | `behavior_change_request` | Request to modify a player's tactics/behavior strategy on the fly. | ```json {"type": "behavior_change_request", "data": {"player_id": 10, "new_behavior_id": 3}}``` |
 
 ---

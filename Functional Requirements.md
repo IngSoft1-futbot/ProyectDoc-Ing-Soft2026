@@ -825,7 +825,6 @@ A user removes a behavior script from the system. Custom behaviors can be delete
 - User is logged in
 - Behavior exists in the database
 - User created the behavior
-- The behavior is NOT the system's `default_behavior` (which is non-deletable)
 
 **Inputs:**
 1. Behavior to delete
