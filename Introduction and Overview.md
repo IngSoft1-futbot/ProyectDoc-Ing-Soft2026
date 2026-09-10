@@ -108,17 +108,25 @@ The system is organized into four core functional areas based on DFD Level 1 pro
 
 **Main Player:** One of three essential players required for team participation in matches (Center, Upper Defendant, Lower Defendant)
 
-**Replacement Player:** Substitute players (3 required) available to enter matches when main players are unavailable
+**Replacement Player:** Substitute players (3 required) available to enter matches.
+
+**PACSS:** Player Attribute Control System The five statistics (Power, Agility, Control, Speed, Strength) used to define player capabilities.
 
 **Leaderboard:** Ranking system within a league tracking team performance metrics (Wins, Losses, Total Goals, points, Owner name). Point values are determined as described, 3 points for a victory, 1 point for a draw, and 0 points for a loss.
 
+**Match Simulation:** Real-time execution of football matches with AI-driven player actions.
+
 **Friendly Match:** Unofficial matches between teams that are not part of a league structure
+
+**Behavior:** Python script that defines how a player acts during match simulation.
 
 **Behavior Assignment:** The act of linking a specific behavior script to a player who will execute that behavior during matches
 
 **Python Syntax Validation:** System verification that ensures behavior scripts contain valid Python code before saving 
 
-**PACCS:**
+**Sandbox:** Secure execution environment for user-provided Python scripts.
+
+**WebSocket:** Real-time communication protocol for live updates during matches.
 
 ---
 
