@@ -15,6 +15,10 @@ The system will provide:
 - League creation and administration
 - Behavior scripting for AI-driven player actions
 - Match simulation and leaderboard tracking
+- Friendly match invitations between users
+- Spectator mode for live matches
+- Global ranking system
+- Avatar customization for users
 
 #### 1.3 System Environment
 
@@ -28,20 +32,20 @@ The system will provide:
 
 **User:**
 - A person interacting with the system
-- Can create multiple teams and leagues
-- Manages player profiles and behaviors
+- Can create multiple teams, players, leagues and behaviors
+- Manages player profiles, teams and behaviors.
 - Owns clubs and teams
 
 **Player:**
 - Members of a team
 - Have configurable PACSS statistics
-- Can be assigned to teams (not multiple teams simultaneously)
+- Can be assigned to teams
 - Execute behaviors during matches
 - Require at least 6 players per team for league participation
 
 **Team:**
 - Consists of multiple players (minimum 6 players required for league participation)
-- Composed of 3 Main players (Center, Upper Defendant, Lower Defendant) and 3 Replacement players for matches
+- Composed of 3 Main players (Center, Upper Defendant, Lower Defendant) and 3 Replacement players for league matches
 - Owned by a user
 - Can participate in leagues and friendly matches
 - Cannot participate in multiple leagues simultaneously
@@ -83,6 +87,21 @@ The system is organized into four core functional areas based on DFD Level 1 pro
 | **3.0 League and Matches Engine** | League creation, match scheduling, leaderboard management | D3: Matches DB |
 | **4.0 Bots and Behaviors Engine** | Behavior creation, modification, deletion, Python syntax validation | D4: Bots DB |
 
+#### 2.1 Technology Stack
+- **Backend Framework:** FastAPI with Python 3.x
+- **Database:** PostgreSQL/SQLite (SQLAlchemy ORM)
+- **Frontend:** React.js with TypeScript
+- **Real-time Communication:** WebSockets via FastAPI's WebSocket support
+- **Security:** Password hashing, input validation, sandboxed Python execution
+
+#### 2.2 System Components
+1. **Authentication Module:** User registration, login, session management
+2. **Player Management Module:** Player creation with PACSS attributes
+3. **Team Management Module:** Team creation and player assignment
+4. **League Management Module:** League creation, match scheduling, standings
+5. **Behavior Engine Module:** Python script validation and execution
+6. **Match Simulation Module:** Real-time game simulation and WebSocket updates
+
 ---
 
 ### 3. Data Flow Overview
@@ -110,7 +129,7 @@ The system is organized into four core functional areas based on DFD Level 1 pro
 
 **Replacement Player:** Substitute players (3 required) available to enter matches.
 
-**PACSS:** Player Attribute Control System The five statistics (Power, Agility, Control, Speed, Strength) used to define player capabilities.
+**PACSS:** Player Attribute Control System. The five statistics (Power, Agility, Control, Speed, Strength) used to define player capabilities.
 
 **Leaderboard:** Ranking system within a league tracking team performance metrics (Wins, Losses, Total Goals, points, Owner name). Point values are determined as described, 3 points for a victory, 1 point for a draw, and 0 points for a loss.
 
@@ -143,6 +162,7 @@ The system is organized into four core functional areas based on DFD Level 1 pro
 
 **Assumptions:**
 - Users will have stable internet connectivity
+- Web browser with WebSocket support for real-time updates
 - Python syntax validation will use Python 3.x standards
 - All user credentials will be validated and securely stored
 - League leaderboards will update in real-time as matches complete
