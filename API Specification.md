@@ -1,5 +1,3 @@
-# 3. API Specification
-
 ## 3.1 Overview
 
 The Futbot API is a RESTful web service built with FastAPI that provides endpoints for all core functionalities of the football game management system. The API follows standard REST conventions and supports JSON data exchange.
