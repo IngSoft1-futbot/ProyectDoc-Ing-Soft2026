@@ -1051,7 +1051,30 @@ The team owner changes the behavior script assigned to a player during an active
 
 ### 6.5 Use Case: Accept Friendly Match
 
-#### (Todo)
+**Actor**: User (Logged in)
+
+**Brief Description:**
+Allows any user that receives an invitation to a friendly match to accept it and start the match immediately.
+
+**Inputs:**
+1. Invitation accept button
+2. Invitation deny button
+3. Team selection
+4. Proceed button
+
+**Preconditions:**
+- The user is logged in
+
+**Successful Flow:**
+1. The user access to their list of invitations for friendly matches
+2. The user clicks "Accept" on the pending invitation.
+3. A window prompts the user to select the team they want to participate with.
+4. The user selects the team they want to participate as and clicks "Proceed".
+5. The system verifies that neither team is currently playing a match and both teams have 3 main players available.
+6. The system instantiates the match room and notifies both users that the match has started.
+7. The system executes the match.
+
+**Exceptional Scenarios:**
 
 ---
 
@@ -1062,7 +1085,7 @@ The team owner changes the behavior script assigned to a player during an active
 **Actor:** Guest / Registered User
 
 **Brief Description:**
-It allows any user—whether logged in or on the login screen—to access and consult the official game documentation, which includes available primitives, syntax rules, and predefined strategic behaviors.
+It allows any user, whether logged in or on the login screen, to access and consult the official game documentation, which includes available primitives, syntax rules, and predefined strategic behaviors.
 
 **Preconditions:**
 - The user is on the Login page or navigating the application interface.
